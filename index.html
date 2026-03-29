@@ -1,0 +1,1659 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PHANO – Hội Khoa học Phát triển Nông thôn Việt Nam</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ─── CSS Variables ─────────────────────────── */
+        :root {
+        --blue-bright:  #1a8cff;
+        --blue-mid:     #0068d6;
+        --blue-dark:    #003a8c;
+        --blue-deeper:  #001e5a;
+        --green-tech:   #00e68a;
+        --green-accent: #3bdc7a;
+        --white:        #ffffff;
+        --gray-bg:      #f0f4f8;
+        --text-dark:    #0d2458;
+        --text-mid:     #1a4080;
+        --radius:       12px;
+        --transition:   0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        /* ─── Reset & Base ──────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+        font-family: 'Montserrat', sans-serif;
+        background: var(--white);
+        color: var(--text-dark);
+        overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+        ul { list-style: none; }
+
+        /* ─── Particle Canvas ───────────────────────── */
+        #particle-canvas {
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: .35;
+        }
+
+        /* ─── NAV ───────────────────────────────────── */
+        .nav {
+        position: fixed; top: 0; left: 0; width: 100%;
+        z-index: 1000;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 48px;
+        height: 68px;
+        background: rgba(0,56,140,.92);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 2px 24px rgba(0,0,0,.2);
+        transition: background var(--transition);
+        }
+
+        .nav-logo {
+        display: flex; align-items: center; gap: 12px;
+        }
+        .nav-logo .logo-circle {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: var(--blue-bright);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 18px; color: #fff;
+        box-shadow: 0 0 0 3px rgba(26,140,255,.3);
+        }
+        .nav-logo .logo-text { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: 2px; }
+        .nav-logo .logo-sub { font-size: 9px; color: rgba(255,255,255,.6); font-weight: 500; letter-spacing: 1px; margin-top: -2px; }
+
+        .nav-links {
+        display: flex; gap: 8px; align-items: center;
+        }
+        .nav-links a {
+        color: rgba(255,255,255,.85);
+        font-size: 12.5px; font-weight: 600;
+        padding: 6px 14px; border-radius: 20px;
+        transition: all .25s;
+        letter-spacing: .4px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+        color: #fff;
+        background: rgba(26,140,255,.35);
+        }
+        .nav-links a.highlight {
+        background: var(--blue-bright);
+        color: #fff;
+        }
+        .nav-links a.highlight:hover {
+        background: var(--green-tech);
+        color: var(--blue-deeper);
+        }
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .nav-actions button {
+        background: none; border: none; cursor: pointer;
+        color: rgba(255,255,255,.7); font-size: 18px;
+        transition: color .2s;
+        }
+        .nav-actions button:hover { color: var(--green-tech); }
+
+        /* ─── HERO ──────────────────────────────────── */
+        .hero {
+        position: relative;
+        height: 100vh; min-height: 600px;
+        display: grid; grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        }
+
+        /* Slider pane */
+        .hero-slider {
+        position: relative; overflow: hidden;
+        }
+        .hero-slide {
+        position: absolute; inset: 0;
+        background-size: cover; background-position: center;
+        opacity: 0; transition: opacity 1.2s ease;
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-slide::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(0,60,140,.35) 0%, transparent 60%);
+        }
+
+        /* Hero content pane */
+        .hero-content {
+        background: linear-gradient(160deg, var(--blue-mid) 0%, var(--blue-deeper) 100%);
+        display: flex; flex-direction: column;
+        justify-content: center; padding: 80px 60px 60px;
+        position: relative; overflow: hidden;
+        z-index: 1;
+        }
+        .hero-content::before {
+        content: '';
+        position: absolute; top: -100px; right: -100px;
+        width: 380px; height: 380px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(26,140,255,.25) 0%, transparent 70%);
+        animation: pulse-glow 4s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+        0%,100% { transform: scale(1); opacity: .7; }
+        50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        .hero-tag {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(0,230,138,.15); border: 1px solid rgba(0,230,138,.4);
+        color: var(--green-tech); border-radius: 20px;
+        font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+        padding: 6px 16px; margin-bottom: 28px;
+        width: fit-content;
+        animation: fadeInUp .8s .2s both;
+        }
+        .hero-tag i { font-size: 10px; }
+
+        .hero-heading {
+        font-size: clamp(32px, 3.5vw, 56px);
+        font-weight: 900; color: #fff;
+        line-height: 1.15; letter-spacing: -1px;
+        margin-bottom: 20px;
+        animation: fadeInUp .8s .35s both;
+        }
+        .hero-heading span { color: var(--green-tech); }
+
+        .hero-sub {
+        font-size: 14px; color: rgba(255,255,255,.65);
+        font-weight: 500; line-height: 1.7;
+        max-width: 360px; margin-bottom: 40px;
+        animation: fadeInUp .8s .5s both;
+        }
+
+        .hero-btns {
+        display: flex; gap: 16px; flex-wrap: wrap;
+        animation: fadeInUp .8s .65s both;
+        }
+        .btn-primary {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: var(--blue-bright);
+        color: #fff; font-weight: 700; font-size: 13px;
+        letter-spacing: .8px; border-radius: 8px;
+        padding: 14px 28px; border: none; cursor: pointer;
+        transition: all .3s; text-transform: uppercase;
+        }
+        .btn-primary:hover {
+        background: var(--green-tech); color: var(--blue-deeper);
+        transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,230,138,.3);
+        }
+        .btn-outline {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: transparent;
+        color: #fff; font-weight: 700; font-size: 13px;
+        letter-spacing: .8px; border-radius: 8px;
+        padding: 13px 28px; border: 2px solid rgba(255,255,255,.4);
+        cursor: pointer; transition: all .3s; text-transform: uppercase;
+        }
+        .btn-outline:hover { border-color: var(--green-tech); color: var(--green-tech); }
+
+        /* Slider dots */
+        .slider-dots {
+        position: absolute; bottom: 24px; left: 50%;
+        transform: translateX(-50%);
+        display: flex; gap: 8px; z-index: 5;
+        }
+        .slider-dots span {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: rgba(255,255,255,.4); cursor: pointer;
+        transition: all .3s;
+        }
+        .slider-dots span.active { background: #fff; width: 24px; border-radius: 4px; }
+
+        /* Tech grid overlay */
+        .tech-grid {
+        position: absolute; inset: 0; pointer-events: none;
+        background-image:
+            linear-gradient(rgba(26,140,255,.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26,140,255,.06) 1px, transparent 1px);
+        background-size: 50px 50px;
+        }
+
+        /* Hero stats bar */
+        .hero-stats {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        z-index: 10; padding: 0 60px;
+        background: rgba(0,10,40,.7); backdrop-filter: blur(12px);
+        display: grid; grid-template-columns: repeat(3,1fr);
+        border-top: 1px solid rgba(26,140,255,.2);
+        }
+        .hero-stat {
+        padding: 18px 24px; display: flex; align-items: center; gap: 14px;
+        border-right: 1px solid rgba(26,140,255,.15);
+        }
+        .hero-stat:last-child { border-right: none; }
+        .hero-stat i {
+        font-size: 22px; color: var(--green-tech);
+        width: 40px; height: 40px; border-radius: 8px;
+        background: rgba(0,230,138,.1);
+        display: flex; align-items: center; justify-content: center;
+        }
+        .hero-stat-num {
+        font-size: 22px; font-weight: 800; color: #fff; line-height: 1;
+        }
+        .hero-stat-label {
+        font-size: 10px; color: rgba(255,255,255,.55); font-weight: 500; letter-spacing: .8px;
+        }
+
+        @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── SECTION HELPERS ───────────────────────── */
+        section { position: relative; }
+        .container {
+        max-width: 1280px; margin: 0 auto; padding: 0 48px;
+        }
+        .section-tag {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 11px; font-weight: 700; letter-spacing: 2px;
+        text-transform: uppercase; margin-bottom: 16px;
+        }
+        .section-tag::before {
+        content: ''; width: 32px; height: 3px; border-radius: 2px;
+        background: currentColor;
+        }
+        .section-heading {
+        font-size: clamp(28px, 3vw, 46px);
+        font-weight: 900; line-height: 1.15; letter-spacing: -1px;
+        }
+        .reveal {
+        opacity: 0; transform: translateY(40px);
+        transition: opacity .8s ease, transform .8s ease;
+        }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        /* ─── ABOUT ─────────────────────────────── */
+    .about {
+        padding: 100px 40px;
+        background: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* ── World Map SVG background ── */
+    .about-world-map {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .about-world-map svg {
+        width: 90%;
+        height: 90%;
+        opacity: 0.13;        /* nhạt vừa, giống ảnh mẫu */
+    }
+    
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 70px;
+        align-items: center;
+    }
+    
+    /* ── Left ── */
+    .section-tag {
+        font-size: 12px; font-weight: 700; letter-spacing: .8px;
+        color: var(--blue-mid); text-transform: uppercase; margin-bottom: 14px;
+    }
+    .section-heading {
+        font-size: 30px; font-weight: 800; line-height: 1.3;
+        color: var(--blue-deeper); max-width: 480px; margin-bottom: 36px;
+    }
+    .section-heading span { color: var(--blue-bright); }
+    
+    .about-features { display: flex; flex-direction: column; gap: 14px; }
+    
+    .about-feature {
+        display: flex; gap: 14px; align-items: flex-start;
+        padding: 18px 20px; border-radius: var(--radius);
+        background: #fff; border: 1px solid rgba(26,140,255,.14);
+        transition: all .3s; cursor: default;
+    }
+    .about-feature:hover {
+        border-color: var(--blue-bright);
+        box-shadow: 0 8px 28px rgba(26,140,255,.13);
+        transform: translateX(6px);
+    }
+    .about-feature-icon {
+        width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
+        background: linear-gradient(135deg, var(--blue-mid), var(--blue-bright));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 18px;
+    }
+    .about-feature-text h4 {
+        font-size: 13.5px; font-weight: 700; color: var(--blue-deeper); margin-bottom: 4px;
+    }
+    .about-feature-text p {
+        font-size: 12px; color: #6a7fa8; line-height: 1.6;
+    }
+    
+    /* ── Right ── */
+    .about-right { display: flex; flex-direction: column; gap: 16px; }
+    
+    .about-card {
+        background: linear-gradient(135deg, var(--blue-mid) 0%, var(--blue-deeper) 100%);
+        border-radius: 20px; padding: 36px;
+        color: #fff; position: relative; overflow: hidden;
+    }
+    .about-card::before {
+        content: ''; position: absolute; top: -30px; right: -30px;
+        width: 150px; height: 150px; border-radius: 50%;
+        background: rgba(255,255,255,.06);
+    }
+    .about-card .card-icon { font-size: 32px; color: var(--green-tech); margin-bottom: 16px; }
+    .about-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+    .about-card p  { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.78); }
+    
+    .about-mini-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .mini-card {
+        background: #fff; border-radius: var(--radius);
+        padding: 22px; text-align: center;
+        border: 1px solid rgba(26,140,255,.12); transition: all .3s;
+    }
+    .mini-card:hover { box-shadow: 0 8px 22px rgba(26,140,255,.13); transform: translateY(-4px); }
+    .mini-card i { font-size: 26px; color: var(--blue-bright); margin-bottom: 8px; display: block; }
+    .mini-card .mini-num { font-size: 26px; font-weight: 900; color: var(--blue-deeper); }
+    .mini-card .mini-label { font-size: 10.5px; color: #6a7fa8; font-weight: 600; letter-spacing: .5px; }
+
+        /* ─── WE SUPPORT ────────────────────────────── */
+        .support {
+        background: linear-gradient(160deg, var(--blue-mid) 0%, var(--blue-bright) 100%);
+        padding: 100px 0;
+        position: relative; overflow: hidden;
+        }
+        .support::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba(255,255,255,.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(0,230,138,.08) 0%, transparent 50%);
+        }
+        .support-header {
+        text-align: center; margin-bottom: 64px;
+        }
+        .support-header .section-tag { color: var(--green-tech); justify-content: center; }
+        .support-header .section-tag::before { display: none; }
+        .support-header .section-heading { color: #fff; }
+        .support-header p { color: rgba(255,255,255,.7); margin-top: 12px; font-size: 15px; }
+
+        .support-dots {
+        display: flex; justify-content: center; gap: 4px;
+        margin-top: 8px;
+        }
+        .support-dots span {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: rgba(255,255,255,.3);
+        }
+
+        .support-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        gap: 24px; margin-top: 48px;
+        }
+        .support-card {
+        background: rgba(255,255,255,.1);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 20px; overflow: hidden;
+        transition: all .4s;
+        cursor: pointer;
+        }
+        .support-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255,255,255,.18);
+        box-shadow: 0 24px 60px rgba(0,0,0,.2);
+        }
+        .support-card-img {
+        height: 200px; overflow: hidden; position: relative;
+        }
+        .support-card-img img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform .6s ease;
+        }
+        .support-card:hover .support-card-img img { transform: scale(1.08); }
+        .support-card-img::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,40,120,.6) 0%, transparent 60%);
+        }
+        .support-card-img .card-icon-overlay {
+        position: absolute; top: 14px; right: 14px; z-index: 2;
+        width: 38px; height: 38px; border-radius: 10px;
+        background: var(--green-tech);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--blue-deeper); font-size: 17px;
+        }
+        .support-card-body { padding: 22px 20px 26px; }
+        .support-card-body h3 {
+        font-size: 14px; font-weight: 800; color: #fff;
+        text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+        }
+        .support-card-body p {
+        font-size: 12.5px; color: rgba(255,255,255,.7); line-height: 1.65;
+        }
+        .support-card-body .read-more {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--green-tech); font-size: 12px; font-weight: 700;
+        margin-top: 14px; transition: gap .2s;
+        }
+        .support-card:hover .read-more { gap: 10px; }
+
+        /* ─── NEWS ──────────────────────────────────── */
+        .news {
+        background: var(--blue-deeper);
+        padding: 100px 0;
+        position: relative; overflow: hidden;
+        }
+        .news::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--green-tech), transparent);
+        }
+        .news-inner {
+        display: grid; grid-template-columns: 320px 1fr;
+        gap: 80px; align-items: flex-start;
+        }
+        .news-left .section-tag { color: var(--green-tech); }
+        .news-left .section-heading { color: #fff; margin-bottom: 20px; }
+        .news-left p { font-size: 13.5px; color: rgba(255,255,255,.6); line-height: 1.7; }
+        .news-left .btn-primary { margin-top: 32px; }
+
+        .news-cards {
+        display: flex; gap: 20px;
+        }
+        .news-card {
+        flex: 1; border-radius: 16px; overflow: hidden;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.1);
+        transition: all .4s;
+        cursor: pointer;
+        }
+        .news-card:hover {
+        transform: translateY(-8px);
+        background: rgba(255,255,255,.1);
+        border-color: rgba(26,140,255,.4);
+        }
+        .news-card-img {
+        height: 200px; overflow: hidden; position: relative;
+        }
+        .news-card-img img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform .6s ease;
+        }
+        .news-card:hover .news-card-img img { transform: scale(1.06); }
+        .news-card-tag {
+        position: absolute; top: 12px; left: 12px; z-index: 2;
+        background: var(--blue-bright); color: #fff;
+        font-size: 10px; font-weight: 700; letter-spacing: 1px;
+        padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+        }
+        .news-card-body { padding: 20px; }
+        .news-card-body .nc-date {
+        font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600;
+        display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+        }
+        .news-card-body h3 {
+        font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4;
+        margin-bottom: 10px;
+        }
+        .news-card-body p { font-size: 12px; color: rgba(255,255,255,.55); line-height: 1.6; }
+        .news-card-body .nc-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--green-tech); font-size: 12px; font-weight: 700;
+        margin-top: 14px; transition: gap .2s;
+        }
+        .news-card:hover .nc-link { gap: 10px; }
+
+        /* ─── STATS (ALiSEA) ────────────────────────── */
+        .stats {
+        background: linear-gradient(160deg, var(--blue-bright) 0%, var(--blue-mid) 100%);
+        padding: 0;
+        position: relative; overflow: hidden;
+        }
+        .stats-inner {
+        display: grid; grid-template-columns: 1fr 2fr;
+        }
+        .stats-brand {
+        padding: 80px 60px;
+        display: flex; flex-direction: column; justify-content: center;
+        background: rgba(0,0,0,.12);
+        }
+        .stats-brand .alisea-logo {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+        }
+        .stats-brand .alisea-logo i { font-size: 36px; color: var(--green-tech); }
+        .stats-brand .alisea-title { font-size: 28px; font-weight: 900; color: #fff; }
+        .stats-brand .alisea-sub { font-size: 11px; color: rgba(255,255,255,.6); font-weight: 500; letter-spacing: 1px; max-width: 240px; line-height: 1.5; }
+        .stats-brand .tag-agro {
+        margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(0,230,138,.15); border: 1px solid rgba(0,230,138,.4);
+        color: var(--green-tech); border-radius: 20px;
+        font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+        padding: 6px 16px; width: fit-content;
+        }
+
+        .stats-numbers {
+        display: grid; grid-template-columns: repeat(3,1fr);
+        position: relative;
+        }
+        .stats-numbers::before {
+        content: '';
+        position: absolute; left: 0; top: 20%; bottom: 20%;
+        width: 1px; background: rgba(255,255,255,.15);
+        }
+        .stat-block {
+        padding: 80px 48px;
+        display: flex; flex-direction: column; justify-content: center;
+        align-items: center; text-align: center;
+        border-right: 1px solid rgba(255,255,255,.15);
+        position: relative;
+        }
+        .stat-block:last-child { border-right: none; }
+        .stat-block i {
+        font-size: 32px; color: rgba(255,255,255,.3);
+        position: absolute; top: 32px; right: 32px;
+        }
+        .stat-num {
+        font-size: 64px; font-weight: 900; color: #fff;
+        line-height: 1; letter-spacing: -2px;
+        }
+        .stat-unit {
+        font-size: 28px; font-weight: 900; color: var(--green-tech);
+        }
+        .stat-label {
+        font-size: 14px; font-weight: 700; color: rgba(255,255,255,.85);
+        margin-top: 10px; letter-spacing: .5px; text-transform: uppercase;
+        }
+        .stat-sub {
+        font-size: 11px; color: rgba(255,255,255,.5); margin-top: 4px;
+        }
+
+        /* ─── MEMBERS ───────────────────────────────── */
+        .members {
+        background: var(--gray-bg);
+        padding: 100px 0;
+        }
+        .members-header {
+        display: flex; justify-content: space-between; align-items: flex-end;
+        margin-bottom: 64px;
+        }
+        .members-header .section-tag { color: var(--blue-mid); }
+        .members-header .section-heading { color: var(--blue-deeper); }
+        .members-header .btn-primary { flex-shrink: 0; }
+
+        .members-grid {
+        display: grid; grid-template-columns: repeat(3,1fr);
+        gap: 28px;
+        }
+        .member-card {
+        background: #fff; border-radius: 20px;
+        padding: 36px; border: 1px solid rgba(26,140,255,.1);
+        position: relative; overflow: hidden;
+        transition: all .4s;
+        }
+        .member-card::before {
+        content: ''; position: absolute; top: 0; left: 0;
+        width: 4px; height: 100%;
+        background: linear-gradient(to bottom, var(--blue-bright), var(--green-tech));
+        }
+        .member-card:hover {
+        box-shadow: 0 16px 48px rgba(26,140,255,.15);
+        transform: translateY(-6px);
+        }
+        .member-quote-icon {
+        font-size: 40px; color: var(--blue-bright); opacity: .15;
+        position: absolute; top: 24px; right: 24px;
+        }
+        .member-card p {
+        font-size: 13.5px; color: #5a6e8a; line-height: 1.75;
+        font-style: italic; margin-bottom: 24px;
+        }
+        .member-info { display: flex; align-items: center; gap: 14px; }
+        .member-avatar {
+        width: 50px; height: 50px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--blue-mid), var(--blue-bright));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 18px; font-weight: 700; flex-shrink: 0;
+        }
+        .member-name { font-size: 14px; font-weight: 800; color: var(--blue-deeper); }
+        .member-org { font-size: 11.5px; color: #8a9ab8; }
+        .member-stars { color: #f5a623; font-size: 12px; margin-top: 4px; }
+
+        .join-cta {
+        margin-top: 60px;
+        background: linear-gradient(135deg, var(--blue-mid), var(--blue-deeper));
+        border-radius: 24px; padding: 60px 80px;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 40px; overflow: hidden; position: relative;
+        }
+        .join-cta::before {
+        content: '';
+        position: absolute; right: -80px; top: -80px;
+        width: 320px; height: 320px; border-radius: 50%;
+        background: rgba(255,255,255,.04);
+        }
+        .join-cta h3 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .join-cta p { font-size: 14px; color: rgba(255,255,255,.65); }
+        .join-cta .btn-primary { flex-shrink: 0; padding: 16px 36px; font-size: 14px; }
+
+        /* ─── PARTNERS ──────────────────────────────── */
+        .partners {
+        background: linear-gradient(160deg, var(--blue-bright) 0%, var(--blue-mid) 100%);
+        padding: 100px 0; overflow: hidden;
+        }
+        .partners-header { margin-bottom: 60px; }
+        .partners-header .section-tag { color: var(--green-tech); }
+        .partners-header .section-heading { color: #fff; }
+        .partners-header p { color: rgba(255,255,255,.7); margin-top: 12px; font-size: 14px; }
+
+        .partners-track-wrap { position: relative; overflow: hidden; }
+        .partners-track-wrap::before,
+        .partners-track-wrap::after {
+        content: ''; position: absolute; top: 0; bottom: 0;
+        width: 120px; z-index: 2; pointer-events: none;
+        }
+        .partners-track-wrap::before {
+        left: 0;
+        background: linear-gradient(90deg, var(--blue-bright), transparent);
+        }
+        .partners-track-wrap::after {
+        right: 0;
+        background: linear-gradient(-90deg, var(--blue-mid), transparent);
+        }
+        .partners-track {
+        display: flex; gap: 24px;
+        animation: scroll-partners 28s linear infinite;
+        width: max-content;
+        }
+        .partners-track:hover { animation-play-state: paused; }
+        @keyframes scroll-partners {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+        }
+        .partner-item {
+        flex-shrink: 0;
+        width: 260px; border-radius: 16px; overflow: hidden;
+        position: relative; cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0,0,0,.2);
+        transition: transform .3s;
+        }
+        .partner-item:hover { transform: scale(1.04); }
+        .partner-item img {
+        width: 100%; height: 180px; object-fit: cover;
+        transition: transform .5s;
+        }
+        .partner-item:hover img { transform: scale(1.08); }
+        .partner-item-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,20,80,.85) 0%, transparent 50%);
+        display: flex; flex-direction: column;
+        justify-content: flex-end; padding: 20px;
+        }
+        .partner-item-overlay h4 { font-size: 15px; font-weight: 800; color: #fff; }
+        .partner-item-overlay span { font-size: 11px; color: rgba(255,255,255,.65); }
+
+        /* ─── FOOTER ────────────────────────────────── */
+        footer {
+        background: var(--blue-deeper);
+        padding: 80px 0 40px;
+        border-top: 1px solid rgba(26,140,255,.15);
+        }
+        .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 60px; margin-bottom: 60px;
+        }
+        .footer-brand .logo-text { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+        .footer-brand .logo-sub { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 4px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.7; max-width: 260px; }
+        .footer-socials { display: flex; gap: 10px; margin-top: 24px; }
+        .footer-socials a {
+        width: 38px; height: 38px; border-radius: 10px;
+        background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,.6); font-size: 16px;
+        transition: all .2s;
+        }
+        .footer-socials a:hover { background: var(--blue-bright); color: #fff; border-color: var(--blue-bright); }
+
+        .footer-col h4 {
+        font-size: 12px; font-weight: 800; color: rgba(255,255,255,.85);
+        text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;
+        }
+        .footer-col a {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 13px; color: rgba(255,255,255,.5);
+        margin-bottom: 10px; transition: color .2s;
+        }
+        .footer-col a:hover { color: var(--green-tech); }
+        .footer-col a i { font-size: 12px; }
+
+        .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,.08);
+        padding-top: 28px;
+        display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-bottom p { font-size: 12px; color: rgba(255,255,255,.35); }
+        .footer-bottom .footer-tag {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 12px; color: rgba(255,255,255,.35);
+        }
+        .footer-tag i { color: var(--green-tech); }
+
+        /* ─── SCROLL TO TOP ─────────────────────────── */
+        #scrollTop {
+        position: fixed; bottom: 32px; right: 32px; z-index: 999;
+        width: 48px; height: 48px; border-radius: 50%;
+        background: var(--blue-bright); color: #fff;
+        border: none; cursor: pointer; font-size: 20px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 8px 24px rgba(26,140,255,.4);
+        opacity: 0; transform: translateY(20px);
+        transition: all .3s;
+        }
+        #scrollTop.visible { opacity: 1; transform: none; }
+        #scrollTop:hover { background: var(--green-tech); color: var(--blue-deeper); transform: translateY(-3px); }
+
+        /* ─── RESPONSIVE ────────────────────────────── */
+        @media (max-width: 1100px) {
+        .hero { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+        .hero-slider { height: 50vh; }
+        .about-grid, .news-inner, .stats-inner { grid-template-columns: 1fr; }
+        .stats-numbers { grid-template-columns: 1fr 1fr 1fr; }
+        .support-grid { grid-template-columns: 1fr 1fr; }
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+        .nav { padding: 0 20px; }
+        .nav-links { display: none; }
+        .container { padding: 0 24px; }
+        .hero-content { padding: 60px 24px; }
+        .support-grid { grid-template-columns: 1fr; }
+        .members-grid { grid-template-columns: 1fr; }
+        .news-cards { flex-direction: column; }
+        .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+        .join-cta { flex-direction: column; padding: 40px 32px; }
+        .stats-numbers { grid-template-columns: 1fr; }
+        }
+    </style>
+    </head>
+    <body>
+
+    <!-- Particle canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- ─── NAV ─────────────────────────────────────── -->
+    <nav class="nav" id="mainNav">
+    <div class="nav-logo">
+        <a href="#" class="logo">
+            <img src="logo.jpg" alt="PHANO Logo" style="height: 56px; width: auto; display: block;">
+        </a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#about">Về chúng tôi</a></li>
+        <li><a href="#support">Chúng tôi làm gì?</a></li>
+        <li><a href="#stats">ALiSEA – Knowledge Hub</a></li>
+        <li><a href="#members">Hội viên</a></li>
+        <li><a href="#partners">Đối tác</a></li>
+        <li><a href="#news">Tin tức</a></li>
+        <li><a href="#contact" class="highlight">Liên hệ</a></li>
+    </ul>
+    <div class="nav-actions">
+        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button><i class="fa-solid fa-language"></i></button>
+    </div>
+    </nav>
+
+    <!-- ─── HERO ─────────────────────────────────────── -->
+    <section class="hero">
+    <!-- Slider -->
+    <div class="hero-slider">
+        <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=80')"></div>
+        <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80')"></div>
+        <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80')"></div>
+        <div class="slider-dots">
+        <span class="active" data-idx="0"></span>
+        <span data-idx="1"></span>
+        <span data-idx="2"></span>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="hero-content">
+        <div class="tech-grid"></div>
+        <div class="hero-tag"><i class="fa-solid fa-circle-nodes"></i> Nông nghiệp · Công nghệ · Phát triển</div>
+        <h1 class="hero-heading">
+        Let's make your <span>vision</span> come to life
+        </h1>
+        <p class="hero-sub">
+        PHANO – Hội Khoa học Phát triển Nông thôn Việt Nam. Kết nối tri thức, thúc đẩy đổi mới và xây dựng tương lai nông nghiệp sinh thái bền vững.
+        </p>
+        <div class="hero-btns">
+        <a href="#support" class="btn-primary"><i class="fa-solid fa-bolt"></i> Khám phá ngay</a>
+        <a href="#about" class="btn-outline"><i class="fa-solid fa-circle-info"></i> Tìm hiểu thêm</a>
+        </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="hero-stats">
+        <div class="hero-stat">
+        <i class="fa-solid fa-seedling"></i>
+        <div>
+            <div class="hero-stat-num">99+</div>
+            <div class="hero-stat-label">Dự án hoàn thành</div>
+        </div>
+        </div>
+        <div class="hero-stat">
+        <i class="fa-solid fa-calendar-check"></i>
+        <div>
+            <div class="hero-stat-num">10+</div>
+            <div class="hero-stat-label">Năm kinh nghiệm</div>
+        </div>
+        </div>
+        <div class="hero-stat">
+        <i class="fa-solid fa-earth-asia"></i>
+        <div>
+            <div class="hero-stat-num">5</div>
+            <div class="hero-stat-label">Quốc gia thành viên</div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── ABOUT ─────────────────────────────────────── -->
+    <section class="about" id="about">
+    
+        <!-- ── SVG World Map Background ─────────────────── -->
+        <div class="about-world-map">
+        <svg viewBox="0 0 2000 1001" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+            <style>.land{fill:#c8cdd6;stroke:#fff;stroke-width:1.2;stroke-linejoin:round;}</style>
+            </defs>
+    
+            <!-- ═══ GREENLAND ═══ -->
+            <path class="land" d="M900,30 L940,25 L980,35 L1010,55 L1010,90 L990,115 L960,125 L930,120 L905,100 L895,70 Z"/>
+            <path class="land" d="M850,40 L880,30 L900,30 L895,70 L870,80 L845,65 Z"/>
+    
+            <!-- ═══ NORTH AMERICA ═══ -->
+            <!-- Canada/Alaska west -->
+            <path class="land" d="M200,80 L280,60 L360,65 L420,80 L460,100 L490,130 L500,165 L475,185 L440,195 L400,190 L360,200 L320,215 L290,230 L260,220 L230,200 L200,185 L175,160 L170,130 L180,105 Z"/>
+            <!-- Alaska peninsula -->
+            <path class="land" d="M130,120 L200,80 L180,105 L170,130 L145,140 L120,135 Z"/>
+            <!-- Canada east -->
+            <path class="land" d="M460,100 L540,90 L600,100 L650,115 L680,135 L670,160 L640,175 L600,180 L560,175 L520,165 L490,130 Z"/>
+            <!-- Labrador / Quebec -->
+            <path class="land" d="M600,100 L660,85 L720,90 L760,110 L780,140 L770,170 L740,185 L700,190 L660,180 L630,165 L600,150 L580,135 L580,115 Z"/>
+            <!-- Newfoundland -->
+            <path class="land" d="M790,130 L820,125 L835,145 L820,165 L795,162 L782,145 Z"/>
+            <!-- Continental US -->
+            <path class="land" d="M260,220 L320,215 L360,200 L400,190 L440,195 L475,185 L500,165 L520,165 L560,175 L600,180 L640,175 L660,195 L670,225 L655,260 L630,285 L600,300 L560,310 L510,320 L460,325 L410,320 L360,305 L310,285 L270,265 L245,245 Z"/>
+            <!-- Florida -->
+            <path class="land" d="M560,310 L580,320 L590,345 L575,360 L555,345 L545,325 Z"/>
+            <!-- Baja California -->
+            <path class="land" d="M245,245 L260,255 L255,295 L235,315 L220,310 L215,280 L225,260 Z"/>
+            <!-- Mexico -->
+            <path class="land" d="M260,285 L310,285 L360,305 L410,320 L430,340 L420,365 L390,375 L355,370 L320,350 L290,325 L260,310 L250,295 Z"/>
+            <!-- Central America -->
+            <path class="land" d="M390,375 L420,365 L440,380 L445,400 L430,415 L405,410 L390,395 Z"/>
+            <!-- Cuba -->
+            <path class="land" d="M540,350 L580,345 L600,360 L590,375 L560,378 L538,365 Z"/>
+    
+            <!-- ═══ CARIBBEAN / ISLANDS ═══ -->
+            <ellipse class="land" cx="630" cy="360" rx="12" ry="8"/>
+            <ellipse class="land" cx="660" cy="370" rx="9" ry="6"/>
+            <ellipse class="land" cx="680" cy="380" rx="7" ry="5"/>
+    
+            <!-- ═══ SOUTH AMERICA ═══ -->
+            <path class="land" d="M430,415 L480,400 L530,405 L570,420 L600,445 L615,480 L620,520 L610,570 L590,620 L560,670 L530,710 L500,730 L475,720 L455,695 L440,650 L425,600 L415,550 L410,495 L415,450 Z"/>
+            <!-- Colombia bump -->
+            <path class="land" d="M480,400 L520,395 L545,410 L530,425 L500,420 Z"/>
+            <!-- Venezuela -->
+            <path class="land" d="M530,405 L580,400 L615,415 L615,435 L590,445 L560,440 L530,425 Z"/>
+            <!-- Brazil east bump -->
+            <path class="land" d="M615,480 L650,470 L670,490 L650,515 L620,510 Z"/>
+            <!-- Argentina/Chile bottom -->
+            <path class="land" d="M475,720 L500,730 L510,760 L495,785 L475,778 L458,755 L455,730 Z"/>
+            <!-- Chile thin strip -->
+            <path class="land" d="M430,600 L445,595 L450,660 L440,720 L425,720 L415,660 L420,610 Z"/>
+    
+            <!-- ═══ EUROPE ═══ -->
+            <!-- Iberia -->
+            <path class="land" d="M870,260 L920,255 L950,270 L955,300 L940,320 L910,325 L880,315 L860,295 L862,275 Z"/>
+            <!-- France -->
+            <path class="land" d="M920,255 L970,250 L1000,265 L1005,290 L985,305 L955,300 L950,270 Z"/>
+            <!-- UK -->
+            <path class="land" d="M885,210 L910,205 L920,225 L910,245 L890,248 L875,235 L875,218 Z"/>
+            <!-- Ireland -->
+            <path class="land" d="M860,218 L878,215 L880,230 L868,238 L855,230 Z"/>
+            <!-- Scandinavia Norway -->
+            <path class="land" d="M955,145 L990,135 L1020,145 L1030,175 L1015,200 L990,210 L965,205 L950,185 L945,165 Z"/>
+            <!-- Sweden -->
+            <path class="land" d="M990,135 L1025,130 L1045,150 L1040,185 L1015,200 L1020,145 Z"/>
+            <!-- Denmark -->
+            <path class="land" d="M970,220 L985,215 L990,230 L978,238 Z"/>
+            <!-- Finland -->
+            <path class="land" d="M1025,130 L1070,120 L1095,140 L1090,175 L1060,185 L1040,185 L1045,150 Z"/>
+            <!-- Benelux/Germany/Poland -->
+            <path class="land" d="M970,250 L1020,240 L1075,245 L1100,265 L1090,290 L1055,300 L1005,290 L1000,265 Z"/>
+            <!-- Italy -->
+            <path class="land" d="M985,305 L1020,300 L1035,320 L1030,350 L1010,370 L990,365 L975,345 L970,320 Z"/>
+            <!-- Sicily -->
+            <ellipse class="land" cx="1005" cy="378" rx="14" ry="9"/>
+            <!-- Balkans/Greece -->
+            <path class="land" d="M1055,300 L1100,295 L1120,315 L1110,340 L1085,348 L1060,338 L1045,320 Z"/>
+            <!-- Greece peninsula -->
+            <path class="land" d="M1080,345 L1095,348 L1092,368 L1075,368 L1068,355 Z"/>
+            <!-- Crete -->
+            <path class="land" d="M1080,378 L1108,374 L1110,382 L1082,385 Z"/>
+            <!-- Baltic states / Poland east -->
+            <path class="land" d="M1075,245 L1120,235 L1155,245 L1160,270 L1130,280 L1100,265 Z"/>
+            <!-- Ukraine / Belarus -->
+            <path class="land" d="M1120,235 L1180,225 L1220,235 L1235,260 L1210,278 L1170,278 L1135,268 L1130,250 Z"/>
+            <!-- Baltics -->
+            <path class="land" d="M1090,200 L1130,195 L1145,215 L1120,235 L1075,245 L1070,225 Z"/>
+    
+            <!-- ═══ RUSSIA ═══ -->
+            <path class="land" d="M1095,140 L1200,120 L1350,100 L1500,90 L1620,95 L1720,110 L1790,130 L1820,155 L1810,185 L1770,205 L1720,215 L1650,220 L1580,218 L1510,215 L1440,210 L1370,205 L1300,200 L1240,198 L1190,200 L1155,210 L1130,195 L1090,200 L1070,185 L1060,185 L1090,175 Z"/>
+            <!-- Russia east extension -->
+            <path class="land" d="M1790,130 L1850,115 L1910,110 L1940,125 L1930,150 L1890,165 L1845,160 L1810,155 Z"/>
+            <!-- Kamchatka -->
+            <path class="land" d="M1920,140 L1950,130 L1970,155 L1960,185 L1940,195 L1915,178 Z"/>
+            <!-- Russia south / Kazakhstan border -->
+            <path class="land" d="M1180,225 L1235,260 L1270,280 L1300,295 L1310,318 L1290,330 L1255,325 L1220,305 L1190,285 L1165,268 L1155,245 Z"/>
+    
+            <!-- ═══ MIDDLE EAST ═══ -->
+            <!-- Turkey -->
+            <path class="land" d="M1100,295 L1160,285 L1210,278 L1240,290 L1245,312 L1220,328 L1175,332 L1135,325 L1110,315 Z"/>
+            <!-- Syria/Iraq/Iran -->
+            <path class="land" d="M1160,310 L1220,305 L1270,310 L1300,330 L1295,360 L1265,375 L1230,370 L1195,355 L1165,338 Z"/>
+            <!-- Iran -->
+            <path class="land" d="M1255,325 L1310,318 L1355,330 L1365,360 L1340,385 L1295,390 L1255,375 L1235,350 Z"/>
+            <!-- Arabian Peninsula -->
+            <path class="land" d="M1195,355 L1245,345 L1280,355 L1300,380 L1305,415 L1280,445 L1245,455 L1210,440 L1190,410 L1180,380 Z"/>
+            <!-- Israel/Jordan/Lebanon -->
+            <path class="land" d="M1150,340 L1175,335 L1185,355 L1170,368 L1150,360 Z"/>
+    
+            <!-- ═══ AFRICA ═══ -->
+            <!-- North Africa -->
+            <path class="land" d="M880,340 L950,330 L1020,330 L1075,335 L1130,340 L1165,355 L1170,385 L1150,410 L1110,420 L1060,425 L1000,425 L940,420 L890,405 L865,385 L862,360 Z"/>
+            <!-- West Africa bump -->
+            <path class="land" d="M862,360 L865,385 L850,410 L840,440 L845,470 L860,495 L855,520 L848,500 L835,475 L825,445 L828,415 L840,390 L850,370 Z"/>
+            <!-- East Africa horn -->
+            <path class="land" d="M1165,390 L1200,385 L1225,400 L1215,425 L1185,430 L1160,415 Z"/>
+            <!-- Central/Southern Africa -->
+            <path class="land" d="M890,405 L940,420 L1000,425 L1060,425 L1110,420 L1150,430 L1160,465 L1150,510 L1120,555 L1080,590 L1040,610 L1000,620 L960,615 L920,595 L890,565 L870,530 L860,495 L855,460 L860,430 L875,415 Z"/>
+            <!-- Madagascar -->
+            <path class="land" d="M1150,510 L1170,500 L1180,530 L1175,565 L1158,580 L1140,565 L1135,535 Z"/>
+            <!-- South Africa bottom -->
+            <path class="land" d="M920,595 L960,615 L1000,620 L1020,635 L1005,655 L970,660 L935,648 L910,625 Z"/>
+    
+            <!-- ═══ CENTRAL ASIA ═══ -->
+            <path class="land" d="M1290,280 L1365,265 L1430,270 L1465,290 L1460,320 L1420,335 L1370,335 L1320,325 L1290,310 Z"/>
+            <!-- Kazakhstan -->
+            <path class="land" d="M1235,240 L1310,230 L1380,235 L1430,250 L1450,270 L1430,290 L1370,295 L1300,295 L1265,278 Z"/>
+    
+            <!-- ═══ SOUTH ASIA ═══ -->
+            <!-- India -->
+            <path class="land" d="M1370,310 L1430,300 L1480,310 L1510,335 L1515,370 L1500,410 L1470,445 L1430,465 L1390,460 L1360,440 L1340,410 L1330,375 L1335,340 Z"/>
+            <!-- India south tip -->
+            <path class="land" d="M1430,465 L1445,478 L1430,492 L1415,480 Z"/>
+            <!-- Sri Lanka -->
+            <ellipse class="land" cx="1445" cy="500" rx="14" ry="20"/>
+            <!-- Pakistan -->
+            <path class="land" d="M1355,295 L1410,285 L1450,290 L1475,310 L1470,340 L1440,355 L1400,350 L1365,335 L1350,315 Z"/>
+            <!-- Bangladesh -->
+            <path class="land" d="M1510,335 L1540,330 L1550,350 L1535,368 L1510,365 Z"/>
+            <!-- Nepal/Bhutan strip -->
+            <path class="land" d="M1450,305 L1510,300 L1520,315 L1510,325 L1450,330 L1440,318 Z"/>
+    
+            <!-- ═══ EAST ASIA ═══ -->
+            <!-- China -->
+            <path class="land" d="M1460,230 L1550,215 L1640,210 L1710,215 L1750,235 L1760,265 L1740,295 L1700,315 L1650,325 L1590,325 L1530,318 L1480,305 L1455,285 Z"/>
+            <!-- South China extension -->
+            <path class="land" d="M1650,325 L1700,330 L1730,350 L1720,375 L1685,380 L1650,365 L1630,345 Z"/>
+            <!-- Mongolia -->
+            <path class="land" d="M1510,215 L1600,200 L1690,200 L1730,215 L1750,235 L1710,245 L1640,250 L1560,248 L1510,240 Z"/>
+            <!-- Korea -->
+            <path class="land" d="M1760,240 L1790,235 L1805,255 L1800,280 L1775,285 L1758,268 Z"/>
+            <!-- Japan main -->
+            <path class="land" d="M1820,200 L1845,195 L1860,215 L1855,250 L1835,265 L1815,255 L1808,230 Z"/>
+            <!-- Japan south -->
+            <path class="land" d="M1808,265 L1825,268 L1830,285 L1815,292 L1802,280 Z"/>
+            <!-- Taiwan -->
+            <ellipse class="land" cx="1770" cy="330" rx="12" ry="18"/>
+    
+            <!-- ═══ SOUTHEAST ASIA ═══ -->
+            <!-- Myanmar/Thailand -->
+            <path class="land" d="M1590,330 L1640,320 L1665,338 L1660,370 L1635,385 L1605,375 L1585,355 Z"/>
+            <!-- Thailand south -->
+            <path class="land" d="M1635,385 L1648,395 L1645,420 L1630,425 L1618,408 Z"/>
+            <!-- Vietnam -->
+            <path class="land" d="M1660,338 L1695,332 L1710,350 L1700,380 L1675,395 L1650,390 L1640,370 L1648,350 Z"/>
+            <!-- Cambodia -->
+            <path class="land" d="M1660,375 L1695,370 L1708,390 L1695,405 L1665,400 Z"/>
+            <!-- Malaysia -->
+            <path class="land" d="M1660,405 L1710,400 L1730,415 L1720,430 L1688,432 L1660,420 Z"/>
+            <!-- Sumatra -->
+            <path class="land" d="M1640,430 L1700,415 L1740,425 L1760,445 L1750,465 L1710,475 L1668,462 L1642,445 Z"/>
+            <!-- Java -->
+            <path class="land" d="M1700,475 L1770,468 L1810,478 L1815,490 L1778,498 L1710,492 L1695,483 Z"/>
+            <!-- Borneo -->
+            <path class="land" d="M1750,420 L1810,415 L1845,435 L1848,470 L1825,490 L1785,492 L1750,475 L1735,452 L1738,432 Z"/>
+            <!-- Sulawesi -->
+            <path class="land" d="M1850,435 L1875,428 L1885,448 L1870,465 L1850,468 L1838,450 Z"/>
+            <!-- Philippines -->
+            <path class="land" d="M1790,330 L1820,325 L1835,345 L1825,368 L1800,370 L1782,352 Z"/>
+            <path class="land" d="M1810,370 L1835,365 L1840,385 L1822,392 L1808,382 Z"/>
+            <!-- New Guinea -->
+            <path class="land" d="M1860,480 L1930,465 L1965,475 L1975,495 L1950,510 L1900,515 L1858,505 Z"/>
+    
+            <!-- ═══ AUSTRALIA ═══ -->
+            <path class="land" d="M1760,570 L1840,555 L1905,558 L1950,575 L1968,605 L1960,645 L1935,675 L1895,690 L1845,692 L1800,680 L1762,655 L1742,622 L1740,590 Z"/>
+            <!-- Queensland bump -->
+            <path class="land" d="M1905,558 L1945,548 L1965,562 L1968,585 L1950,575 Z"/>
+            <!-- Tasmania -->
+            <ellipse class="land" cx="1862" cy="712" rx="22" ry="18"/>
+            <!-- New Zealand North -->
+            <path class="land" d="M1960,690 L1982,680 L1990,700 L1978,718 L1958,712 L1950,698 Z"/>
+            <!-- New Zealand South -->
+            <path class="land" d="M1950,720 L1975,714 L1980,738 L1965,758 L1944,748 L1938,732 Z"/>
+    
+            <!-- ═══ CENTRAL AFRICA ISLANDS ═══ -->
+            <ellipse class="land" cx="830" cy="390" rx="10" ry="8"/>
+        </svg>
+        </div>
+    
+        <!-- ── Content ── -->
+        <div class="container">
+        <div class="about-grid">
+    
+            <div class="about-left">
+            <div class="section-tag"><i class="fa-solid fa-circle-dot"></i> Về PHANO</div>
+            <h2 class="section-heading">
+                PHANO is built on our founders' unique outlook on
+                <span>agroecology</span>
+            </h2>
+            <div class="about-features">
+                <div class="about-feature">
+                <div class="about-feature-icon"><i class="fa-solid fa-microchip"></i></div>
+                <div class="about-feature-text">
+                    <h4>Công nghệ số trong nông nghiệp</h4>
+                    <p>Ứng dụng dữ liệu lớn, AI và IoT vào theo dõi mùa vụ, tối ưu hóa canh tác sinh thái.</p>
+                </div>
+                </div>
+                <div class="about-feature">
+                <div class="about-feature-icon"><i class="fa-solid fa-network-wired"></i></div>
+                <div class="about-feature-text">
+                    <h4>Mạng lưới tri thức khu vực</h4>
+                    <p>Kết nối các nhà khoa học, nông dân và tổ chức quốc tế tại Đông Nam Á.</p>
+                </div>
+                </div>
+                <div class="about-feature">
+                <div class="about-feature-icon"><i class="fa-solid fa-recycle"></i></div>
+                <div class="about-feature-text">
+                    <h4>Phát triển bền vững</h4>
+                    <p>Thúc đẩy hệ thống thực phẩm công bằng, đa dạng sinh học và bảo vệ môi trường.</p>
+                </div>
+                </div>
+            </div>
+            </div>
+    
+            <div class="about-right">
+            <div class="about-card">
+                <div class="card-icon"><i class="fa-solid fa-globe"></i></div>
+                <h3>Tầm nhìn của chúng tôi</h3>
+                <p>Xây dựng hệ sinh thái nông nghiệp – công nghệ bền vững, nơi tri thức khoa học được chuyển hóa thành hành động thực tiễn tại cộng đồng nông thôn Việt Nam và Đông Nam Á.</p>
+            </div>
+            <div class="about-mini-cards">
+                <div class="mini-card">
+                <i class="fa-solid fa-users"></i>
+                <div class="mini-num">500+</div>
+                <div class="mini-label">Hội viên</div>
+                </div>
+                <div class="mini-card">
+                <i class="fa-solid fa-flask"></i>
+                <div class="mini-num">48</div>
+                <div class="mini-label">Nghiên cứu</div>
+                </div>
+                <div class="mini-card">
+                <i class="fa-solid fa-handshake"></i>
+                <div class="mini-num">30+</div>
+                <div class="mini-label">Đối tác</div>
+                </div>
+                <div class="mini-card">
+                <i class="fa-solid fa-award"></i>
+                <div class="mini-num">12</div>
+                <div class="mini-label">Giải thưởng</div>
+                </div>
+            </div>
+            </div>
+    
+        </div>
+        </div>
+    </section>
+
+    <!-- ─── WE SUPPORT ────────────────────────────────── -->
+    <section class="support" id="support">
+    <div class="container">
+        <div class="support-header reveal">
+        <div class="section-tag"><i class="fa-solid fa-star"></i> Chúng tôi làm gì?</div>
+        <h2 class="section-heading" style="color:#fff">We support...</h2>
+        <div class="support-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p>Bốn trụ cột hành động cốt lõi của PHANO</p>
+        </div>
+
+        <div class="support-grid">
+            <a href="/detail.html" class="support-card reveal">
+                <div class="support-card-img">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80" alt="Tham vấn">
+                    <div class="card-icon-overlay">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                </div>
+                <div class="support-card-body">
+                    <h3>Tham vấn đa bên</h3>
+                    <p>Kết nối chính phủ, nhà khoa học, nông dân và doanh nghiệp để cùng giải quyết thách thức nông nghiệp.</p>
+                    <span class="read-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+        <div class="support-card reveal">
+            
+            <div class="support-card-img">
+            <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=600&q=80" alt="Mạng lưới">
+            <div class="card-icon-overlay"><i class="fa-solid fa-circle-nodes"></i></div>
+            </div>
+            <div class="support-card-body">
+            <h3>Phát triển mạng lưới học hỏi</h3>
+            <p>Xây dựng cộng đồng chia sẻ kiến thức xuyên biên giới, thúc đẩy học hỏi ngang hàng trong khu vực.</p>
+            <a class="read-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="support-card reveal">
+            <div class="support-card-img">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&q=80" alt="Đổi mới">
+            <div class="card-icon-overlay"><i class="fa-solid fa-lightbulb"></i></div>
+            </div>
+            <div class="support-card-body">
+            <h3>Đổi mới sáng tạo</h3>
+            <p>Thúc đẩy ứng dụng công nghệ tiên tiến vào canh tác sinh thái và chuyển đổi hệ thống thực phẩm.</p>
+            <a class="read-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="support-card reveal">
+            <div class="support-card-img">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" alt="Nghiên cứu">
+            <div class="card-icon-overlay"><i class="fa-solid fa-graduation-cap"></i></div>
+            </div>
+            <div class="support-card-body">
+            <h3>Nghiên cứu – Đào tạo</h3>
+            <p>Triển khai các chương trình đào tạo, nghiên cứu ứng dụng và phát triển năng lực địa phương.</p>
+            <a class="read-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── NEWS ──────────────────────────────────────── -->
+    <section class="news" id="news">
+    <div class="container">
+        <div class="news-inner">
+        <div class="news-left reveal">
+            <div class="section-tag"><i class="fa-solid fa-newspaper"></i> Tin tức, sự kiện</div>
+            <h2 class="section-heading">Cập nhật mới nhất từ PHANO</h2>
+            <p>Theo dõi các hoạt động, nghiên cứu và sự kiện mới nhất trong lĩnh vực nông nghiệp sinh thái khu vực Đông Nam Á.</p>
+            <a href="#" class="btn-primary"><i class="fa-solid fa-rss"></i> Xem tất cả</a>
+        </div>
+
+        <div class="news-cards">
+            <div class="news-card reveal">
+            <div class="news-card-img">
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80" alt="News 1">
+                <span class="news-card-tag">Sự kiện</span>
+            </div>
+            <div class="news-card-body">
+                <div class="nc-date"><i class="fa-regular fa-calendar"></i> 15 tháng 3, 2025</div>
+                <h3>Hội thảo quốc tế về nông nghiệp sinh thái Đông Nam Á 2025</h3>
+                <p>Sự kiện quy tụ hơn 200 chuyên gia từ 5 quốc gia cùng thảo luận về tương lai bền vững.</p>
+                <a class="nc-link">Đọc thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            </div>
+
+            <div class="news-card reveal">
+            <div class="news-card-img">
+                <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=80" alt="News 2">
+                <span class="news-card-tag">Nghiên cứu</span>
+            </div>
+            <div class="news-card-body">
+                <div class="nc-date"><i class="fa-regular fa-calendar"></i> 08 tháng 2, 2025</div>
+                <h3>Báo cáo tác động của biến đổi khí hậu lên canh tác vùng cao</h3>
+                <p>Công bố kết quả nghiên cứu 3 năm tại các tỉnh miền núi phía Bắc Việt Nam.</p>
+                <a class="nc-link">Đọc thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            </div>
+
+            <div class="news-card reveal">
+            <div class="news-card-img">
+                <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80" alt="News 3">
+                <span class="news-card-tag">Dự án</span>
+            </div>
+            <div class="news-card-body">
+                <div class="nc-date"><i class="fa-regular fa-calendar"></i> 20 tháng 1, 2025</div>
+                <h3>Khởi động chương trình chuyển đổi số nông nghiệp tỉnh Lâm Đồng</h3>
+                <p>Ứng dụng IoT và dữ liệu vào quản lý vườn trà và cà phê bền vững.</p>
+                <a class="nc-link">Đọc thêm <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── STATS ──────────────────────────────────────── -->
+    <section class="stats" id="stats">
+    <div class="stats-inner">
+        <div class="stats-brand reveal">
+        <div class="alisea-logo">
+            <i class="fa-solid fa-earth-asia"></i>
+            <span class="alisea-title">ALiSEA</span>
+        </div>
+        <div class="alisea-sub">Agroecology Learning Alliance in South East Asia</div>
+        <div class="tag-agro"><i class="fa-solid fa-leaf"></i> Nông nghiệp Sinh thái</div>
+        <div class="tag-agro" style="margin-top:10px;color:#fff;border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.1)">
+            <i class="fa-solid fa-database"></i> Knowledge Hub
+        </div>
+        </div>
+
+        <div class="stats-numbers">
+        <div class="stat-block reveal">
+            <i class="fa-solid fa-folder-open"></i>
+            <div>
+            <span class="stat-num counter" data-target="99">0</span><span class="stat-unit">+</span>
+            </div>
+            <div class="stat-label">Projects Completed</div>
+            <div class="stat-sub">Dự án đã hoàn thành</div>
+        </div>
+        <div class="stat-block reveal">
+            <i class="fa-solid fa-hourglass-half"></i>
+            <div>
+            <span class="stat-num counter" data-target="10">0</span><span class="stat-unit">+</span>
+            </div>
+            <div class="stat-label">Years in Inspiration</div>
+            <div class="stat-sub">Năm đồng hành cùng nông nghiệp</div>
+        </div>
+        <div class="stat-block reveal">
+            <i class="fa-solid fa-flag"></i>
+            <div>
+            <span class="stat-num counter" data-target="5">0</span><span class="stat-unit"></span>
+            </div>
+            <div class="stat-label">Country Members</div>
+            <div class="stat-sub">Quốc gia thành viên</div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── MEMBERS ────────────────────────────────────── -->
+    <section class="members" id="members">
+    <div class="container">
+        <div class="members-header reveal">
+        <div>
+            <div class="section-tag"><i class="fa-solid fa-users"></i> Hội viên</div>
+            <h2 class="section-heading">Tiếng nói từ cộng đồng PHANO</h2>
+        </div>
+        <a href="#" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Tham gia ngay</a>
+        </div>
+
+        <div class="members-grid">
+        <div class="member-card reveal">
+            <i class="fa-solid fa-quote-right member-quote-icon"></i>
+            <p>PHANO đã mở ra cánh cửa kết nối với các chuyên gia quốc tế, giúp chúng tôi tiếp cận phương pháp canh tác sinh thái tiên tiến và ứng dụng vào thực địa hiệu quả.</p>
+            <div class="member-info">
+            <div class="member-avatar">T</div>
+            <div>
+                <div class="member-name">Trần Thị Minh Châu</div>
+                <div class="member-org">Viện Khoa học Nông nghiệp Việt Nam</div>
+                <div class="member-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="member-card reveal">
+            <i class="fa-solid fa-quote-right member-quote-icon"></i>
+            <p>Mạng lưới tri thức của PHANO là nguồn tài nguyên vô giá. Các hội thảo và dự án thực địa đã thay đổi hoàn toàn cách tiếp cận nghiên cứu của chúng tôi.</p>
+            <div class="member-info">
+            <div class="member-avatar">N</div>
+            <div>
+                <div class="member-name">Nguyễn Văn Hùng</div>
+                <div class="member-org">Đại học Tây Nguyên</div>
+                <div class="member-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="member-card reveal">
+            <i class="fa-solid fa-quote-right member-quote-icon"></i>
+            <p>Là đối tác chiến lược của PHANO, chúng tôi nhận thấy tác động tích cực rõ ràng đến chính sách phát triển nông thôn và đời sống của bà con nông dân địa phương.</p>
+            <div class="member-info">
+            <div class="member-avatar">L</div>
+            <div>
+                <div class="member-name">Lê Quang Bảo</div>
+                <div class="member-org">Bộ Nông nghiệp và Phát triển Nông thôn</div>
+                <div class="member-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="join-cta reveal">
+        <div>
+            <h3><i class="fa-solid fa-leaf" style="color:var(--green-tech);margin-right:10px"></i>Trở thành Hội viên PHANO</h3>
+            <p>Cùng chúng tôi xây dựng tương lai nông nghiệp bền vững cho Việt Nam và Đông Nam Á</p>
+        </div>
+        <a href="#" class="btn-primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> JOIN US</a>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── PARTNERS ───────────────────────────────────── -->
+    <section class="partners" id="partners">
+    <div class="container">
+        <div class="partners-header reveal">
+        <div class="section-tag"><i class="fa-solid fa-handshake"></i> Đối tác</div>
+        <h2 class="section-heading">Cùng chúng tôi tạo ra thay đổi</h2>
+        <p>Mạng lưới đối tác chiến lược trên khắp khu vực Đông Nam Á</p>
+        </div>
+    </div>
+    <div class="partners-track-wrap">
+        <div class="partners-track" id="partnersTrack">
+        <!-- Cards duplicated for infinite scroll -->
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Green Hall</h4><span>Countryside Center</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Willow Gallery</h4><span>Farmstead Road</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Rustic Barn</h4><span>Agricultural Expo Park</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Terra Farm</h4><span>Highland District</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>EcoViet</h4><span>Mekong Delta Hub</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>AgroTech Lab</h4><span>Innovation Center</span></div>
+        </div>
+        <!-- Duplicates for seamless loop -->
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Green Hall</h4><span>Countryside Center</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Willow Gallery</h4><span>Farmstead Road</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Rustic Barn</h4><span>Agricultural Expo Park</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>Terra Farm</h4><span>Highland District</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>EcoViet</h4><span>Mekong Delta Hub</span></div>
+        </div>
+        <div class="partner-item">
+            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=80" alt="">
+            <div class="partner-item-overlay"><h4>AgroTech Lab</h4><span>Innovation Center</span></div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ─── FOOTER ─────────────────────────────────────── -->
+    <footer id="contact">
+    <div class="container">
+        <div class="footer-grid">
+        <div class="footer-brand">
+            <div class="logo-text">PHANO</div>
+            <div class="logo-sub">Hội Khoa học Phát triển Nông thôn Việt Nam</div>
+            <p>Kết nối khoa học và thực tiễn, thúc đẩy phát triển nông nghiệp sinh thái bền vững tại Việt Nam và khu vực Đông Nam Á.</p>
+            <div class="footer-socials">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Điều hướng</h4>
+            <a href="#about"><i class="fa-solid fa-chevron-right"></i> Về chúng tôi</a>
+            <a href="#support"><i class="fa-solid fa-chevron-right"></i> Hoạt động</a>
+            <a href="#stats"><i class="fa-solid fa-chevron-right"></i> ALiSEA Hub</a>
+            <a href="#members"><i class="fa-solid fa-chevron-right"></i> Hội viên</a>
+            <a href="#partners"><i class="fa-solid fa-chevron-right"></i> Đối tác</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Tài nguyên</h4>
+            <a href="#"><i class="fa-solid fa-file-pdf"></i> Báo cáo thường niên</a>
+            <a href="#"><i class="fa-solid fa-book"></i> Xuất bản phẩm</a>
+            <a href="#"><i class="fa-solid fa-video"></i> Webinar</a>
+            <a href="#"><i class="fa-solid fa-database"></i> Dữ liệu mở</a>
+            <a href="#"><i class="fa-solid fa-newspaper"></i> Bản tin</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Liên hệ</h4>
+            <a href="#"><i class="fa-solid fa-location-dot"></i> Hà Nội, Việt Nam</a>
+            <a href="#"><i class="fa-solid fa-envelope"></i> info@phano.vn</a>
+            <a href="#"><i class="fa-solid fa-phone"></i> +84 24 xxxx xxxx</a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        </div>
+        </div>
+
+        <div class="footer-bottom">
+        <p>© 2025 PHANO – Hội Khoa học Phát triển Nông thôn Việt Nam. All rights reserved.</p>
+        <div class="footer-tag">
+            <i class="fa-solid fa-leaf"></i> Nông nghiệp Sinh thái · Công nghệ · Phát triển bền vững
+        </div>
+        </div>
+    </div>
+    </footer>
+
+    <!-- Scroll top -->
+    <button id="scrollTop"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <!-- ─── JAVASCRIPT ──────────────────────────────────── -->
+    <script>
+    /* ── Particle System ────────────────────────────── */
+    (function () {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.r = Math.random() * 2 + .5;
+        this.vx = (Math.random() - .5) * .4;
+        this.vy = (Math.random() - .5) * .4;
+        this.alpha = Math.random() * .6 + .1;
+        this.color = Math.random() > .5 ? '#1a8cff' : '#00e68a';
+        }
+        update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+        }
+        draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function connectParticles() {
+        for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = '#1a8cff';
+            ctx.globalAlpha = (.15 * (1 - dist / 120));
+            ctx.lineWidth = .5;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            }
+        }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => { p.update(); p.draw(); });
+        connectParticles();
+        requestAnimationFrame(animate);
+    }
+    animate();
+    })();
+
+    /* ── Hero Slider ────────────────────────────────── */
+    (function () {
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.slider-dots span');
+    let current = 0;
+
+    function goTo(idx) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = idx;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+
+    dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+    setInterval(() => goTo((current + 1) % slides.length), 5000);
+    })();
+
+    /* ── Nav scroll effect ──────────────────────────── */
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+    });
+    document.getElementById('scrollTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    /* ── Reveal on scroll ───────────────────────────── */
+    (function () {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * 80);
+            observer.unobserve(e.target);
+        }
+        });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    })();
+
+    /* ── Counter animation ──────────────────────────── */
+    (function () {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = +el.dataset.target;
+        let current = 0;
+        const step = Math.ceil(target / 60);
+        const timer = setInterval(() => {
+            current = Math.min(current + step, target);
+            el.textContent = current;
+            if (current >= target) clearInterval(timer);
+        }, 30);
+        observer.unobserve(el);
+        });
+    }, { threshold: .5 });
+    document.querySelectorAll('.counter').forEach(el => observer.observe(el));
+    })();
+
+    /* ── Active nav link ────────────────────────────── */
+    (function () {
+    const sections = document.querySelectorAll('section[id]');
+    const links = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+        });
+        links.forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+        });
+    });
+    })();
+    </script>
+    </body>
+    </html>

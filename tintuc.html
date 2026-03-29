@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tin tức, sự kiện – PHANO</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+:root {
+  --blue-bright:  #1a8cff;
+  --blue-mid:     #0068d6;
+  --blue-dark:    #003a8c;
+  --blue-deeper:  #001e5a;
+  --blue-nav:     #00388c;
+  --green-tech:   #00e68a;
+  --white:        #ffffff;
+  --gray-bg:      #f4f7fb;
+  --gray-light:   #eef2f8;
+  --text-dark:    #0d2458;
+  --text-mid:     #1a4080;
+  --text-body:    #3a4a6a;
+  --border:       rgba(26,140,255,.14);
+  --radius:       10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Montserrat', sans-serif; background: #fff; color: var(--text-dark); overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; width: 100%;
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 68px;
+  background: var(--blue-nav);
+  box-shadow: 0 2px 20px rgba(0,0,0,.18);
+}
+.nav-logo img { height: 52px; width: auto; display: block; }
+.nav-links { display: flex; gap: 4px; align-items: center; }
+.nav-links a {
+  color: rgba(255,255,255,.85); font-size: 12.5px; font-weight: 600;
+  padding: 6px 14px; border-radius: 20px; transition: all .22s; letter-spacing: .3px;
+}
+.nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,.15); }
+.nav-links a.highlight { background: var(--blue-bright); color: #fff; }
+.nav-links a.highlight:hover { background: #fff; color: var(--blue-dark); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.nav-actions button {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,.7); font-size: 18px; transition: color .2s;
+}
+.nav-actions button:hover { color: #fff; }
+
+/* ── HERO BANNER ── */
+.hero {
+  margin-top: 68px;
+  display: grid; grid-template-columns: 5fr 4fr;
+  height: 340px;
+}
+.hero-slider { position: relative; overflow: hidden; }
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.hero-slide.active { opacity: 1; }
+.slider-dots {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 7px; z-index: 5;
+}
+.slider-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.5); cursor: pointer; transition: all .3s;
+}
+.slider-dots span.active { background: #fff; width: 22px; border-radius: 4px; }
+.hero-content {
+  background: var(--blue-nav);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 52px;
+}
+.hero-logo { margin-bottom: 20px; }
+.hero-logo img { height: 52px; }
+.hero-heading { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 22px; }
+.hero-actions { display: flex; gap: 12px; align-items: center; }
+.hero-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-bright); color: #fff;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  padding: 10px 24px; border-radius: 6px; border: none;
+  cursor: pointer; text-transform: uppercase; width: fit-content; transition: all .25s;
+}
+.hero-btn:hover { background: #fff; color: var(--blue-dark); }
+.hero-icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.3);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px; cursor: pointer; transition: all .25s;
+}
+.hero-icon-btn:hover { background: rgba(255,255,255,.25); }
+
+/* ── SUBNAV ── */
+.subnav {
+  background: #fff; border-bottom: 2px solid var(--gray-light);
+  position: sticky; top: 68px; z-index: 900;
+}
+.subnav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 48px;
+  display: flex; align-items: center;
+}
+.subnav-item {
+  padding: 14px 22px; font-size: 13px; font-weight: 600;
+  color: var(--text-body); cursor: pointer;
+  border-bottom: 3px solid transparent; transition: all .22s; white-space: nowrap;
+}
+.subnav-item:hover { color: var(--blue-mid); border-bottom-color: var(--blue-bright); }
+.subnav-item.active { color: var(--blue-mid); border-bottom-color: var(--blue-bright); }
+
+/* ── CONTAINER ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+
+/* ── PAGE HEADER ── */
+.page-header { padding: 56px 0 36px; background: #fff; }
+.page-header h1 { font-size: 34px; font-weight: 800; color: var(--text-dark); margin-bottom: 14px; }
+.page-header p {
+  font-size: 13.5px; line-height: 1.8; color: var(--blue-mid);
+  font-weight: 500; max-width: 760px;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--gray-bg); border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); padding: 16px 0; margin-bottom: 44px;
+}
+.filter-inner {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.filter-search {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 7px; padding: 8px 14px;
+  font-size: 13px; color: var(--text-body); min-width: 160px;
+  transition: border-color .2s;
+}
+.filter-search:focus-within { border-color: var(--blue-bright); }
+.filter-search i { color: var(--blue-bright); font-size: 13px; }
+.filter-search input {
+  border: none; outline: none; background: transparent;
+  font-size: 12.5px; color: var(--text-dark); font-family: inherit;
+  width: 100%;
+}
+.filter-select {
+  display: flex; align-items: center; gap: 7px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 7px; padding: 8px 14px;
+  font-size: 12.5px; color: var(--text-body); cursor: pointer;
+  transition: border-color .2s; white-space: nowrap;
+}
+.filter-select:hover { border-color: var(--blue-bright); }
+.filter-select i { color: #aab; font-size: 11px; }
+.filter-select select {
+  border: none; outline: none; background: transparent;
+  font-size: 12.5px; color: var(--text-dark); font-family: inherit; cursor: pointer;
+}
+.filter-btn {
+  background: var(--blue-bright); color: #fff;
+  border: none; border-radius: 7px; padding: 9px 20px;
+  font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: all .22s; font-family: inherit;
+}
+.filter-btn:hover { background: var(--blue-dark); }
+
+/* ── NEWS GRID ── */
+.news-section { padding-bottom: 72px; }
+.news-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; margin-bottom: 40px;
+}
+
+/* Card */
+.news-card {
+  border-radius: var(--radius); overflow: hidden;
+  background: #fff; border: 1px solid var(--border);
+  transition: all .3s; cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.news-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(26,140,255,.13); border-color: var(--blue-bright); }
+
+/* Featured card: dark blue bg */
+.news-card.featured { background: var(--blue-nav); border-color: var(--blue-nav); }
+.news-card.featured .nc-title { color: #fff; }
+.news-card.featured .nc-body { color: rgba(255,255,255,.72); }
+.news-card.featured .nc-link { color: var(--blue-bright); }
+.news-card.featured .nc-date { color: rgba(255,255,255,.45); }
+
+.nc-img-wrap { position: relative; height: 200px; overflow: hidden; flex-shrink: 0; }
+.nc-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .55s ease;
+}
+.news-card:hover .nc-img-wrap img { transform: scale(1.06); }
+
+.nc-tag {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  background: var(--blue-bright); color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+}
+.nc-tag.tai-lieu { background: var(--blue-dark); }
+.nc-tag.su-kien  { background: #e67e22; }
+
+.nc-body-wrap { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+.nc-date {
+  font-size: 11px; color: #8a9ab8; font-weight: 600;
+  display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+}
+.nc-title {
+  font-size: 14px; font-weight: 700; color: var(--text-dark);
+  line-height: 1.45; margin-bottom: 10px;
+}
+.nc-body {
+  font-size: 12.5px; color: var(--text-body); line-height: 1.7; flex: 1;
+}
+.nc-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--blue-bright);
+  margin-top: 14px; transition: gap .2s;
+}
+.news-card:hover .nc-link { gap: 9px; }
+
+/* ── TYPE FILTER TABS ── */
+.type-tabs {
+  display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap;
+}
+.type-tab {
+  padding: 7px 18px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid var(--border); color: var(--text-body);
+  transition: all .22s; background: #fff;
+}
+.type-tab:hover { border-color: var(--blue-bright); color: var(--blue-mid); }
+.type-tab.active { background: var(--blue-bright); color: #fff; border-color: var(--blue-bright); }
+
+/* ── PAGINATION ── */
+.pagination {
+  display: flex; justify-content: center; align-items: center; gap: 6px;
+  padding-top: 20px;
+}
+.page-btn {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid var(--border); color: var(--text-body);
+  background: #fff; transition: all .22s;
+}
+.page-btn:hover { border-color: var(--blue-bright); color: var(--blue-mid); }
+.page-btn.active { background: var(--blue-bright); color: #fff; border-color: var(--blue-bright); }
+.page-btn.arrow { font-size: 12px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--blue-deeper); padding: 70px 0 36px;
+  border-top: 1px solid rgba(26,140,255,.12);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 56px; margin-bottom: 52px;
+}
+.footer-brand .logo-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+.footer-brand .logo-sub { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 3px; margin-bottom: 18px; }
+.footer-brand p { font-size: 12.5px; color: rgba(255,255,255,.5); line-height: 1.75; max-width: 250px; }
+.footer-socials { display: flex; gap: 9px; margin-top: 22px; }
+.footer-socials a {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.55); font-size: 15px; transition: all .2s;
+}
+.footer-socials a:hover { background: var(--blue-bright); color: #fff; border-color: var(--blue-bright); }
+.footer-col h4 { font-size: 11px; font-weight: 800; color: rgba(255,255,255,.8); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
+.footer-col a {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: rgba(255,255,255,.48); margin-bottom: 9px; transition: color .2s;
+}
+.footer-col a:hover { color: var(--green-tech); }
+.footer-col a i { font-size: 11px; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.07); padding-top: 26px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { font-size: 11.5px; color: rgba(255,255,255,.3); }
+.footer-tag { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: rgba(255,255,255,.3); }
+.footer-tag i { color: var(--green-tech); }
+
+/* ── SCROLL TOP ── */
+#scrollTop {
+  position: fixed; bottom: 28px; right: 28px; z-index: 999;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--blue-bright); color: #fff; border: none;
+  cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(26,140,255,.38);
+  opacity: 0; transform: translateY(16px); transition: all .3s;
+}
+#scrollTop.visible { opacity: 1; transform: none; }
+#scrollTop:hover { background: var(--blue-dark); }
+
+/* ── REVEAL ── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; height: auto; }
+  .hero-slider { height: 260px; position: relative; }
+  .news-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav { padding: 0 18px; }
+  .nav-links { display: none; }
+  .container { padding: 0 20px; }
+  .news-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .filter-inner { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-logo">
+    <a href="index.html">
+      <img src="logo.jpg" alt="PHANO Logo">
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html#about">Về chúng tôi</a></li>
+    <li><a href="chungtoi.html">Chúng tôi làm gì?</a></li>
+    <li><a href="index.html#stats">ALiSEA – Knowledge Hub</a></li>
+    <li><a href="index.html#members">Hội viên</a></li>
+    <li><a href="index.html#partners">Đối tác</a></li>
+    <li><a href="tintuc.html" class="active">Tin tức</a></li>
+    <li><a href="index.html#contact" class="highlight">Liên hệ</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button><i class="fa-solid fa-language"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-slider">
+    <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80')"></div>
+    <div class="slider-dots">
+      <span class="active" data-idx="0"></span>
+      <span data-idx="1"></span>
+      <span data-idx="2"></span>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-logo"><img src="logo.jpg" alt="PHANO"></div>
+    <h1 class="hero-heading">Let's make your vision come to life</h1>
+    <div class="hero-actions">
+      <a href="#news" class="hero-btn">KNOW MORE</a>
+      <div class="hero-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="hero-icon-btn"><i class="fa-solid fa-language"></i></div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- PAGE HEADER -->
+<div class="page-header" id="news">
+  <div class="container">
+    <h1 class="reveal">Tin tức, sự kiện</h1>
+    <p class="reveal">This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <div class="filter-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Tìm kiếm..." id="searchInput">
+      </div>
+      <div class="filter-select">
+        <select id="typeFilter" onchange="filterCards()">
+          <option value="">Loại tin tức</option>
+          <option value="tin-tuc">Tin tức</option>
+          <option value="su-kien">Sự kiện</option>
+          <option value="tai-lieu">Tài liệu</option>
+        </select>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <div class="filter-select">
+        <select id="topicFilter" onchange="filterCards()">
+          <option value="">Chủ đề</option>
+          <option value="nong-nghiep">Nông nghiệp sinh thái</option>
+          <option value="cong-nghe">Công nghệ</option>
+          <option value="dao-tao">Đào tạo</option>
+          <option value="hop-tac">Hợp tác quốc tế</option>
+        </select>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <div class="filter-select">
+        <select id="yearFilter" onchange="filterCards()">
+          <option value="">Năm</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </select>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <button class="filter-btn" onclick="filterCards()">Lọc</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEWS SECTION -->
+<section class="news-section">
+  <div class="container">
+
+    <!-- Type tabs -->
+    <div class="type-tabs reveal">
+      <div class="type-tab active" data-type="">Tất cả</div>
+      <div class="type-tab" data-type="tin-tuc">Tin tức</div>
+      <div class="type-tab" data-type="su-kien">Sự kiện</div>
+      <div class="type-tab" data-type="tai-lieu">Tài liệu</div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="news-grid" id="newsGrid">
+
+      <!-- Row 1 -->
+      <div class="news-card reveal" data-type="tin-tuc">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&q=80" alt="">
+          <span class="nc-tag">Tin tức</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 20 tháng 3, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card featured reveal" data-type="tai-lieu">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&q=80" alt="">
+          <span class="nc-tag tai-lieu">Tài liệu</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 15 tháng 3, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card reveal" data-type="tin-tuc">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="">
+          <span class="nc-tag">Tin tức</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 10 tháng 3, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="news-card reveal" data-type="su-kien">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80" alt="">
+          <span class="nc-tag su-kien">Sự kiện</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 05 tháng 3, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card reveal" data-type="tin-tuc">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&q=80" alt="">
+          <span class="nc-tag">Tin tức</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 28 tháng 2, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card featured reveal" data-type="tai-lieu">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=600&q=80" alt="">
+          <span class="nc-tag tai-lieu">Tài liệu</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 20 tháng 2, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="news-card reveal" data-type="tin-tuc">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" alt="">
+          <span class="nc-tag">Tin tức</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 14 tháng 2, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card reveal" data-type="su-kien">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" alt="">
+          <span class="nc-tag su-kien">Sự kiện</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 08 tháng 2, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+      <div class="news-card reveal" data-type="tai-lieu">
+        <div class="nc-img-wrap">
+          <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&q=80" alt="">
+          <span class="nc-tag tai-lieu">Tài liệu</span>
+        </div>
+        <div class="nc-body-wrap">
+          <div class="nc-date"><i class="fa-regular fa-calendar"></i> 01 tháng 2, 2025</div>
+          <div class="nc-title">This will help build a connection between you and them, that hopefully leads to a working relationship.</div>
+          <p class="nc-body"></p>
+          <a class="nc-link">Đọc thêm &gt;&gt;&gt;</a>
+        </div>
+      </div>
+
+    </div><!-- /news-grid -->
+
+    <!-- Pagination -->
+    <div class="pagination reveal">
+      <div class="page-btn arrow">&lt;</div>
+      <div class="page-btn active">1</div>
+      <div class="page-btn">2</div>
+      <div class="page-btn">3</div>
+      <div class="page-btn">4</div>
+      <div class="page-btn">5</div>
+      <div class="page-btn arrow">&gt;</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">PHANO</div>
+        <div class="logo-sub">Hội Khoa học Phát triển Nông thôn Việt Nam</div>
+        <p>Kết nối khoa học và thực tiễn, thúc đẩy phát triển nông nghiệp sinh thái bền vững tại Việt Nam và khu vực Đông Nam Á.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Điều hướng</h4>
+        <a href="index.html#about"><i class="fa-solid fa-chevron-right"></i> Về chúng tôi</a>
+        <a href="chungtoi.html"><i class="fa-solid fa-chevron-right"></i> Hoạt động</a>
+        <a href="index.html#stats"><i class="fa-solid fa-chevron-right"></i> ALiSEA Hub</a>
+        <a href="index.html#members"><i class="fa-solid fa-chevron-right"></i> Hội viên</a>
+        <a href="index.html#partners"><i class="fa-solid fa-chevron-right"></i> Đối tác</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tài nguyên</h4>
+        <a href="#"><i class="fa-solid fa-file-pdf"></i> Báo cáo thường niên</a>
+        <a href="#"><i class="fa-solid fa-book"></i> Xuất bản phẩm</a>
+        <a href="#"><i class="fa-solid fa-video"></i> Webinar</a>
+        <a href="#"><i class="fa-solid fa-database"></i> Dữ liệu mở</a>
+        <a href="#"><i class="fa-solid fa-newspaper"></i> Bản tin</a>
+      </div>
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <a href="#"><i class="fa-solid fa-location-dot"></i> Hà Nội, Việt Nam</a>
+        <a href="#"><i class="fa-solid fa-envelope"></i> info@phano.vn</a>
+        <a href="#"><i class="fa-solid fa-phone"></i> +84 24 xxxx xxxx</a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PHANO – Hội Khoa học Phát triển Nông thôn Việt Nam. All rights reserved.</p>
+      <div class="footer-tag"><i class="fa-solid fa-leaf"></i> Nông nghiệp Sinh thái · Công nghệ · Phát triển bền vững</div>
+    </div>
+  </div>
+</footer>
+
+<button id="scrollTop"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+/* Hero Slider */
+(function(){
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.slider-dots span');
+  let current = 0;
+  function goTo(idx){
+    slides[current].classList.remove('active'); dots[current].classList.remove('active');
+    current = idx;
+    slides[current].classList.add('active'); dots[current].classList.add('active');
+  }
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+  setInterval(() => goTo((current+1)%slides.length), 5000);
+})();
+
+/* Type Tabs */
+document.querySelectorAll('.type-tab').forEach(tab => {
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const type = this.dataset.type;
+    document.querySelectorAll('.news-card').forEach(card => {
+      if(!type || card.dataset.type === type){
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+/* Filter */
+function filterCards(){
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const type = document.getElementById('typeFilter').value;
+  document.querySelectorAll('.news-card').forEach(card => {
+    const matchType = !type || card.dataset.type === type;
+    const text = card.textContent.toLowerCase();
+    const matchSearch = !search || text.includes(search);
+    card.style.display = (matchType && matchSearch) ? '' : 'none';
+  });
+}
+document.getElementById('searchInput').addEventListener('input', filterCards);
+
+/* Scroll */
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
+});
+document.getElementById('scrollTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+/* Reveal */
+(function(){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*60); observer.unobserve(e.target); }
+    });
+  }, {threshold: 0.1});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+/* Pagination */
+document.querySelectorAll('.page-btn:not(.arrow)').forEach(btn => {
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.page-btn:not(.arrow)').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

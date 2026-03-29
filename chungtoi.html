@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chúng tôi làm gì? – PHANO</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+:root {
+  --blue-bright:  #1a8cff;
+  --blue-mid:     #0068d6;
+  --blue-dark:    #003a8c;
+  --blue-deeper:  #001e5a;
+  --blue-nav:     #00388c;
+  --green-tech:   #00e68a;
+  --white:        #ffffff;
+  --gray-bg:      #f4f7fb;
+  --gray-light:   #eef2f8;
+  --text-dark:    #0d2458;
+  --text-mid:     #1a4080;
+  --text-body:    #3a4a6a;
+  --border:       rgba(26,140,255,.14);
+  --radius:       10px;
+  --transition:   0.3s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Montserrat', sans-serif; background: var(--white); color: var(--text-dark); overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; width: 100%;
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 68px;
+  background: var(--blue-nav);
+  box-shadow: 0 2px 20px rgba(0,0,0,.18);
+}
+.nav-logo img { height: 52px; width: auto; display: block; }
+.nav-links { display: flex; gap: 4px; align-items: center; }
+.nav-links a {
+  color: rgba(255,255,255,.85); font-size: 12.5px; font-weight: 600;
+  padding: 6px 14px; border-radius: 20px; transition: all .22s; letter-spacing: .3px;
+}
+.nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,.15); }
+.nav-links a.highlight { background: var(--blue-bright); color: #fff; }
+.nav-links a.highlight:hover { background: #fff; color: var(--blue-dark); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.nav-actions button {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,.7); font-size: 18px; transition: color .2s;
+}
+.nav-actions button:hover { color: #fff; }
+
+/* ── HERO BANNER ── */
+.hero {
+  margin-top: 68px;
+  display: grid; grid-template-columns: 5fr 4fr;
+  height: 340px;
+}
+.hero-slider { position: relative; overflow: hidden; }
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.hero-slide.active { opacity: 1; }
+.slider-dots {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 7px; z-index: 5;
+}
+.slider-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.5); cursor: pointer; transition: all .3s;
+}
+.slider-dots span.active { background: #fff; width: 22px; border-radius: 4px; }
+
+.hero-content {
+  background: var(--blue-nav);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 52px;
+}
+.hero-logo { margin-bottom: 20px; }
+.hero-logo img { height: 52px; }
+.hero-heading { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 22px; }
+.hero-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-bright); color: #fff;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  padding: 10px 24px; border-radius: 6px; border: none;
+  cursor: pointer; text-transform: uppercase; width: fit-content;
+  transition: all .25s;
+}
+.hero-btn:hover { background: #fff; color: var(--blue-dark); }
+.hero-actions { display: flex; gap: 12px; align-items: center; }
+.hero-icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.3);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px; cursor: pointer; transition: all .25s;
+}
+.hero-icon-btn:hover { background: rgba(255,255,255,.25); }
+
+/* ── SUBNAV ── */
+.subnav {
+  background: #fff;
+  border-bottom: 2px solid var(--gray-light);
+  position: sticky; top: 68px; z-index: 900;
+}
+.subnav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 48px;
+  display: flex; align-items: center; gap: 0;
+}
+.subnav-item {
+  padding: 14px 22px; font-size: 13px; font-weight: 600;
+  color: var(--text-body); cursor: pointer;
+  border-bottom: 3px solid transparent; transition: all .22s;
+  white-space: nowrap;
+}
+.subnav-item:hover { color: var(--blue-mid); border-bottom-color: var(--blue-bright); }
+.subnav-item.active { color: var(--blue-mid); border-bottom-color: var(--blue-bright); }
+
+/* ── CONTAINER ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+
+/* ── INTRO SECTION ── */
+.intro-section { padding: 64px 0 48px; background: #fff; }
+.intro-section h1 {
+  font-size: 32px; font-weight: 800; color: var(--text-dark);
+  margin-bottom: 20px;
+}
+.intro-text {
+  font-size: 13.5px; line-height: 1.85; color: var(--text-body);
+  max-width: 860px; margin-bottom: 14px;
+}
+.intro-text:last-child { margin-bottom: 0; }
+.intro-highlight { color: var(--blue-mid); font-weight: 600; }
+
+/* ── CONTRIBUTION SECTION ── */
+.contribution { padding: 20px 0 48px; background: #fff; }
+.contribution h2 {
+  font-size: 24px; font-weight: 800; color: var(--text-dark); margin-bottom: 18px;
+}
+.contrib-list { list-style: none; margin-bottom: 16px; }
+.contrib-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13.5px; line-height: 1.7; color: var(--text-body);
+  margin-bottom: 10px;
+}
+.contrib-list li::before {
+  content: '•'; color: var(--blue-bright); font-size: 18px; line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* ── 4 PILLARS TABS ── */
+.pillars-section { background: var(--blue-nav); padding: 48px 0 0; }
+.pillars-tabs {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+}
+.pillar-tab {
+  padding: 28px 20px 24px;
+  cursor: pointer;
+  border-bottom: 4px solid transparent;
+  transition: all .25s;
+  color: rgba(255,255,255,.7);
+}
+.pillar-tab:hover { background: rgba(255,255,255,.07); color: #fff; }
+.pillar-tab.active {
+  background: rgba(255,255,255,.12);
+  border-bottom-color: var(--blue-bright);
+  color: #fff;
+}
+.pillar-num {
+  font-size: 28px; font-weight: 900; line-height: 1;
+  margin-bottom: 16px; opacity: .5;
+}
+.pillar-tab.active .pillar-num { opacity: 1; color: var(--blue-bright); }
+.pillar-tab-img {
+  width: 100%; height: 130px; object-fit: cover;
+  border-radius: 8px; margin-bottom: 14px;
+  opacity: .7; transition: opacity .25s;
+}
+.pillar-tab.active .pillar-tab-img { opacity: 1; }
+.pillar-tab-title {
+  font-size: 11px; font-weight: 800; letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.pillar-arrow {
+  font-size: 11px; margin-top: 8px; color: rgba(255,255,255,.4);
+  display: block; transition: color .25s;
+}
+.pillar-tab.active .pillar-arrow { color: var(--blue-bright); }
+
+/* ── PILLAR CONTENT ── */
+.pillar-content-area { background: #fff; }
+.pillar-panel { display: none; padding: 60px 0; }
+.pillar-panel.active { display: block; }
+.pillar-panel-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: start;
+}
+.pillar-panel-title {
+  font-size: 26px; font-weight: 800; color: var(--text-dark); margin-bottom: 20px;
+}
+.pillar-panel-body {
+  font-size: 13.5px; line-height: 1.85; color: var(--text-body); margin-bottom: 16px;
+}
+.pillar-panel-list { margin-bottom: 20px; }
+.pillar-panel-list li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 13px; line-height: 1.6; color: var(--text-body); margin-bottom: 10px;
+}
+.pillar-panel-list li i { color: var(--blue-bright); font-size: 12px; margin-top: 3px; flex-shrink: 0; }
+.pillar-note {
+  background: #fff3cd; border-left: 4px solid #f5a623;
+  padding: 12px 18px; border-radius: 0 8px 8px 0;
+  font-size: 12.5px; color: #7a5500; line-height: 1.6;
+  margin-top: 20px;
+}
+.pillar-right { display: flex; flex-direction: column; gap: 20px; }
+.pillar-img-main {
+  width: 100%; height: 230px; object-fit: cover; border-radius: var(--radius);
+}
+.pillar-img-main + .pillar-img-main { height: 180px; }
+.pillar-sub-info {
+  background: var(--gray-bg); border-radius: var(--radius); padding: 22px;
+}
+.pillar-sub-info h4 {
+  font-size: 12px; font-weight: 700; color: var(--blue-mid);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px;
+}
+.pillar-sub-info ul li {
+  font-size: 12.5px; color: var(--text-body); line-height: 1.65;
+  padding: 5px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.pillar-sub-info ul li:last-child { border-bottom: none; }
+.pillar-sub-info ul li::before {
+  content: counter(item);
+  counter-increment: item;
+  background: var(--blue-bright); color: #fff;
+  font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.pillar-sub-info ul { counter-reset: item; }
+
+/* ── SERVICES SECTION ── */
+.services-section { background: #fff; padding: 64px 0; border-top: 1px solid var(--gray-light); }
+.services-section h2 {
+  font-size: 28px; font-weight: 800; color: var(--text-dark);
+  margin-bottom: 40px;
+}
+.services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.service-card {
+  padding: 0 0 20px;
+  border-bottom: 3px solid transparent;
+  transition: all .3s;
+}
+.service-card:hover { border-bottom-color: var(--blue-bright); }
+.service-icon {
+  width: 52px; height: 52px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gray-light); border-radius: 12px;
+  color: var(--blue-mid); font-size: 22px;
+  transition: all .3s;
+}
+.service-card:hover .service-icon { background: var(--blue-bright); color: #fff; }
+.service-num {
+  font-size: 13px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px;
+}
+.service-divider {
+  width: 28px; height: 2px; background: var(--blue-bright); margin-bottom: 12px;
+}
+.service-body {
+  font-size: 12.5px; line-height: 1.75; color: var(--text-body); margin-bottom: 14px;
+}
+.service-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--blue-bright);
+  transition: gap .2s;
+}
+.service-card:hover .service-link { gap: 9px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--blue-deeper); padding: 70px 0 36px;
+  border-top: 1px solid rgba(26,140,255,.12);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 56px; margin-bottom: 52px;
+}
+.footer-brand .logo-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+.footer-brand .logo-sub { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 3px; margin-bottom: 18px; }
+.footer-brand p { font-size: 12.5px; color: rgba(255,255,255,.5); line-height: 1.75; max-width: 250px; }
+.footer-socials { display: flex; gap: 9px; margin-top: 22px; }
+.footer-socials a {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.55); font-size: 15px; transition: all .2s;
+}
+.footer-socials a:hover { background: var(--blue-bright); color: #fff; border-color: var(--blue-bright); }
+.footer-col h4 {
+  font-size: 11px; font-weight: 800; color: rgba(255,255,255,.8);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px;
+}
+.footer-col a {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: rgba(255,255,255,.48);
+  margin-bottom: 9px; transition: color .2s;
+}
+.footer-col a:hover { color: var(--green-tech); }
+.footer-col a i { font-size: 11px; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.07); padding-top: 26px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { font-size: 11.5px; color: rgba(255,255,255,.3); }
+.footer-tag { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: rgba(255,255,255,.3); }
+.footer-tag i { color: var(--green-tech); }
+
+/* ── SCROLL TOP ── */
+#scrollTop {
+  position: fixed; bottom: 28px; right: 28px; z-index: 999;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--blue-bright); color: #fff; border: none;
+  cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(26,140,255,.38);
+  opacity: 0; transform: translateY(16px); transition: all .3s;
+}
+#scrollTop.visible { opacity: 1; transform: none; }
+#scrollTop:hover { background: var(--blue-dark); }
+
+/* ── REVEAL ── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; height: auto; }
+  .hero-slider { height: 260px; position: relative; }
+  .pillars-tabs { grid-template-columns: repeat(2,1fr); }
+  .pillar-panel-inner { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav { padding: 0 18px; }
+  .nav-links { display: none; }
+  .container { padding: 0 20px; }
+  .pillars-tabs { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-logo">
+    <a href="index.html">
+      <img src="logo.jpg" alt="PHANO Logo">
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html#about">Về chúng tôi</a></li>
+    <li><a href="chungtoi.html" class="active">Chúng tôi làm gì?</a></li>
+    <li><a href="index.html#stats">ALiSEA – Knowledge Hub</a></li>
+    <li><a href="index.html#members">Hội viên</a></li>
+    <li><a href="index.html#partners">Đối tác</a></li>
+    <li><a href="tintuc.html">Tin tức</a></li>
+    <li><a href="index.html#contact" class="highlight">Liên hệ</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button><i class="fa-solid fa-language"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-slider">
+    <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80')"></div>
+    <div class="slider-dots">
+      <span class="active" data-idx="0"></span>
+      <span data-idx="1"></span>
+      <span data-idx="2"></span>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="logo.jpg" alt="PHANO">
+    </div>
+    <h1 class="hero-heading">Let's make your vision come to life</h1>
+    <div class="hero-actions">
+      <a href="#intro" class="hero-btn">KNOW MORE</a>
+      <div class="hero-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="hero-icon-btn"><i class="fa-solid fa-language"></i></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- INTRO -->
+<section class="intro-section" id="intro">
+  <div class="container">
+    <h1 class="reveal">Chúng tôi làm gì?</h1>
+    <p class="intro-text reveal">
+      PHANO is built on our founders' unique outlook on agroecology. Anything that will introduce your brand's persona to your clients. This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship. <span class="intro-highlight">(Giới thiệu đầy đủ, chi tiết về PHANO làm gì)</span>
+    </p>
+    <p class="intro-text reveal">
+      This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship. <span class="intro-highlight">(Giới thiệu đầy đủ, chi tiết về PHANO làm gì)</span>
+    </p>
+  </div>
+</section>
+
+<!-- CONTRIBUTION -->
+<div class="contribution">
+  <div class="container">
+    <h2 class="reveal">Công việc của chúng tôi góp phần làm tăng:</h2>
+    <ul class="contrib-list reveal">
+      <li>Việc áp dụng nông nghiệp sinh thái và các phương pháp tương tự, có chứng nhận hoặc không có chứng nhận.</li>
+      <li>Số lượng các hoạt động NNST chuyển từ thực hành tốt sang thực hành tốt nhất.</li>
+      <li>Số lượng các hoạt động nông nghiệp đang trở nên bền vững hơn và tích hợp các nguyên tắc và phương pháp sinh thái...</li>
+    </ul>
+    <p class="intro-text reveal">
+      Bạn có thể tìm hiểu thêm về chiến lược và tầm nhìn của chúng tôi về tương lai của ngành thực phẩm và nông nghiệp.
+    </p>
+  </div>
+</div>
+
+<!-- 4 PILLARS TABS -->
+<section class="pillars-section" id="pillars">
+  <div class="pillars-tabs">
+    <div class="pillar-tab active" data-panel="0">
+      <div class="pillar-num">1</div>
+      <img class="pillar-tab-img" src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=80" alt="Tham vấn">
+      <div class="pillar-tab-title">Tham vấn đa bên</div>
+      <span class="pillar-arrow">&gt;&gt;&gt;</span>
+    </div>
+    <div class="pillar-tab" data-panel="1">
+      <div class="pillar-num">2</div>
+      <img class="pillar-tab-img" src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&q=80" alt="Mạng lưới">
+      <div class="pillar-tab-title">Xây dựng mạng lưới kết nối</div>
+      <span class="pillar-arrow">&gt;&gt;&gt;</span>
+    </div>
+    <div class="pillar-tab" data-panel="2">
+      <div class="pillar-num">3</div>
+      <img class="pillar-tab-img" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&q=80" alt="Đổi mới">
+      <div class="pillar-tab-title">Đổi mới sáng tạo</div>
+      <span class="pillar-arrow">&gt;&gt;&gt;</span>
+    </div>
+    <div class="pillar-tab" data-panel="3">
+      <div class="pillar-num">4</div>
+      <img class="pillar-tab-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&q=80" alt="Nghiên cứu">
+      <div class="pillar-tab-title">Nghiên cứu, đào tạo</div>
+      <span class="pillar-arrow">&gt;&gt;&gt;</span>
+    </div>
+  </div>
+</section>
+
+<!-- PILLAR PANELS -->
+<div class="pillar-content-area">
+  <div class="container">
+
+    <!-- Panel 1 -->
+    <div class="pillar-panel active" id="panel-0">
+      <div class="pillar-panel-inner">
+        <div class="pillar-left">
+          <h2 class="pillar-panel-title">1. Tham vấn đa bên</h2>
+          <p class="pillar-panel-body">
+            PHANO is built on our founders' unique outlook on construction Anything that will introduce your brand's persona to your clients. This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <p class="pillar-panel-body">
+            This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <div class="pillar-sub-info" style="margin-top:24px;">
+            <h4>Thông tin sự kiện tham vấn tiêu biểu</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pillar-right">
+          <img class="pillar-img-main" src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=700&q=80" alt="Tham vấn 1">
+          <div class="pillar-sub-info">
+            <h4>Sự kiện nổi bật khác</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+          <div class="pillar-note">
+            <i class="fa-solid fa-circle-info" style="margin-right:6px;color:#f5a623"></i>
+            Các hoạt động 2,3,4 làm theo format tương tự. Nếu có nhiều hoạt động hơn thì sẽ có phần xem thêm hoặc tách riêng 1 trang con (sub 3) để cho đỡ dài.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2 -->
+    <div class="pillar-panel" id="panel-1">
+      <div class="pillar-panel-inner">
+        <div class="pillar-left">
+          <h2 class="pillar-panel-title">2. Xây dựng mạng lưới kết nối</h2>
+          <p class="pillar-panel-body">
+            PHANO xây dựng cộng đồng chia sẻ kiến thức xuyên biên giới, thúc đẩy học hỏi ngang hàng trong khu vực. Kết nối các nhà khoa học, nông dân và tổ chức quốc tế tại Đông Nam Á. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <p class="pillar-panel-body">
+            Mạng lưới tri thức được xây dựng qua nhiều năm hoạt động, kết nối hơn 500 hội viên từ các tổ chức nghiên cứu, cơ quan nhà nước và cộng đồng nông dân. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <div class="pillar-sub-info" style="margin-top:24px;">
+            <h4>Thông tin mạng lưới tiêu biểu</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pillar-right">
+          <img class="pillar-img-main" src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=700&q=80" alt="Mạng lưới">
+          <div class="pillar-sub-info">
+            <h4>Hoạt động mạng lưới khác</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3 -->
+    <div class="pillar-panel" id="panel-2">
+      <div class="pillar-panel-inner">
+        <div class="pillar-left">
+          <h2 class="pillar-panel-title">3. Đổi mới sáng tạo</h2>
+          <p class="pillar-panel-body">
+            PHANO thúc đẩy ứng dụng công nghệ tiên tiến vào canh tác sinh thái và chuyển đổi hệ thống thực phẩm. Kết nối doanh nghiệp công nghệ với cộng đồng nông nghiệp địa phương. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <p class="pillar-panel-body">
+            Ứng dụng dữ liệu lớn, AI và IoT vào theo dõi mùa vụ, tối ưu hóa canh tác sinh thái và phát triển bền vững. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <div class="pillar-sub-info" style="margin-top:24px;">
+            <h4>Dự án đổi mới tiêu biểu</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pillar-right">
+          <img class="pillar-img-main" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=700&q=80" alt="Đổi mới">
+          <div class="pillar-sub-info">
+            <h4>Sáng kiến công nghệ khác</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4 -->
+    <div class="pillar-panel" id="panel-3">
+      <div class="pillar-panel-inner">
+        <div class="pillar-left">
+          <h2 class="pillar-panel-title">4. Nghiên cứu, đào tạo</h2>
+          <p class="pillar-panel-body">
+            PHANO triển khai các chương trình đào tạo, nghiên cứu ứng dụng và phát triển năng lực địa phương trong lĩnh vực nông nghiệp sinh thái. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <p class="pillar-panel-body">
+            Các chương trình đào tạo được thiết kế phù hợp với điều kiện thực tế của từng địa phương, giúp nâng cao năng lực cho nông dân và cán bộ khuyến nông. <strong>(Giới thiệu đầy đủ, chi tiết về hoạt động này)</strong>
+          </p>
+          <div class="pillar-sub-info" style="margin-top:24px;">
+            <h4>Chương trình nghiên cứu tiêu biểu</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pillar-right">
+          <img class="pillar-img-main" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=700&q=80" alt="Nghiên cứu">
+          <div class="pillar-sub-info">
+            <h4>Hoạt động đào tạo khác</h4>
+            <ul>
+              <li>Sự kiện gì, ở đâu, với ai, thời gian nào?</li>
+              <li>Số lượng các bên tham gia</li>
+              <li>Sự kiện này tạo ra ảnh hưởng như thế nào? Kết quả là gì?</li>
+              <li>PHANO đóng vai trò như thế nào trong sự kiện này?</li>
+              <li>Link đến bài báo hoặc kết quả tham vấn</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services-section">
+  <div class="container">
+    <h2 class="reveal">Các dịch vụ mà chúng tôi cung cấp</h2>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="service-num">1. Đào tạo</div>
+        <div class="service-divider"></div>
+        <p class="service-body">Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <a class="service-link">Xem thêm &gt;&gt;&gt;</a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-cogs"></i></div>
+        <div class="service-num">2. Abcdef</div>
+        <div class="service-divider"></div>
+        <p class="service-body">Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <a class="service-link">Xem thêm &gt;&gt;&gt;</a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-leaf"></i></div>
+        <div class="service-num">3. Ghijknml</div>
+        <div class="service-divider"></div>
+        <p class="service-body">Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <a class="service-link">Xem thêm &gt;&gt;&gt;</a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-lightbulb"></i></div>
+        <div class="service-num">4. Xyztttt</div>
+        <div class="service-divider"></div>
+        <p class="service-body">Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <a class="service-link">Xem thêm &gt;&gt;&gt;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">PHANO</div>
+        <div class="logo-sub">Hội Khoa học Phát triển Nông thôn Việt Nam</div>
+        <p>Kết nối khoa học và thực tiễn, thúc đẩy phát triển nông nghiệp sinh thái bền vững tại Việt Nam và khu vực Đông Nam Á.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Điều hướng</h4>
+        <a href="index.html#about"><i class="fa-solid fa-chevron-right"></i> Về chúng tôi</a>
+        <a href="chungtoi.html"><i class="fa-solid fa-chevron-right"></i> Hoạt động</a>
+        <a href="index.html#stats"><i class="fa-solid fa-chevron-right"></i> ALiSEA Hub</a>
+        <a href="index.html#members"><i class="fa-solid fa-chevron-right"></i> Hội viên</a>
+        <a href="index.html#partners"><i class="fa-solid fa-chevron-right"></i> Đối tác</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tài nguyên</h4>
+        <a href="#"><i class="fa-solid fa-file-pdf"></i> Báo cáo thường niên</a>
+        <a href="#"><i class="fa-solid fa-book"></i> Xuất bản phẩm</a>
+        <a href="#"><i class="fa-solid fa-video"></i> Webinar</a>
+        <a href="#"><i class="fa-solid fa-database"></i> Dữ liệu mở</a>
+        <a href="#"><i class="fa-solid fa-newspaper"></i> Bản tin</a>
+      </div>
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <a href="#"><i class="fa-solid fa-location-dot"></i> Hà Nội, Việt Nam</a>
+        <a href="#"><i class="fa-solid fa-envelope"></i> info@phano.vn</a>
+        <a href="#"><i class="fa-solid fa-phone"></i> +84 24 xxxx xxxx</a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PHANO – Hội Khoa học Phát triển Nông thôn Việt Nam. All rights reserved.</p>
+      <div class="footer-tag"><i class="fa-solid fa-leaf"></i> Nông nghiệp Sinh thái · Công nghệ · Phát triển bền vững</div>
+    </div>
+  </div>
+</footer>
+
+<button id="scrollTop"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+/* Hero Slider */
+(function(){
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.slider-dots span');
+  let current = 0;
+  function goTo(idx){
+    slides[current].classList.remove('active'); dots[current].classList.remove('active');
+    current = idx;
+    slides[current].classList.add('active'); dots[current].classList.add('active');
+  }
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+  setInterval(() => goTo((current+1)%slides.length), 5000);
+})();
+
+/* Pillar Tabs */
+document.querySelectorAll('.pillar-tab').forEach(tab => {
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.pillar-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pillar-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('panel-' + this.dataset.panel).classList.add('active');
+  });
+});
+
+/* Scroll */
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
+});
+document.getElementById('scrollTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+/* Reveal */
+(function(){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*80); observer.unobserve(e.target); }
+    });
+  }, {threshold: 0.12});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>

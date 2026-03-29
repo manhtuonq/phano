@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PHANO – Giới thiệu chi tiết</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root {
+  --blue-bright:  #1a8cff;
+  --blue-mid:     #0068d6;
+  --blue-dark:    #003a8c;
+  --blue-deeper:  #001e5a;
+  --green-tech:   #00e68a;
+  --white:        #ffffff;
+  --gray-bg:      #f0f4f8;
+  --gray-light:   #f7f9fc;
+  --text-dark:    #0d2458;
+  --radius:       12px;
+  --transition:   0.35s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;background:#fff;color:var(--text-dark);overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+ul{list-style:none;}
+
+ /* ─── NAV ───────────────────────────────────── */
+ .nav {
+      position: fixed; top: 0; left: 0; width: 100%;
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(0,56,140,.92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 24px rgba(0,0,0,.2);
+      transition: background var(--transition);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-logo .logo-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--blue-bright);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px; color: #fff;
+      box-shadow: 0 0 0 3px rgba(26,140,255,.3);
+    }
+    .nav-logo .logo-text { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: 2px; }
+    .nav-logo .logo-sub { font-size: 9px; color: rgba(255,255,255,.6); font-weight: 500; letter-spacing: 1px; margin-top: -2px; }
+
+    .nav-links {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,.85);
+      font-size: 12.5px; font-weight: 600;
+      padding: 6px 14px; border-radius: 20px;
+      transition: all .25s;
+      letter-spacing: .4px;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+      background: rgba(0 50 126 / 92%);
+    }
+    .nav-links a.highlight {
+      background: var(--blue-bright);
+      color: #fff;
+    }
+    .nav-links a.highlight:hover {
+      background: var(--green-tech);
+      color: var(--blue-deeper);
+    }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .nav-actions button {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,.7); font-size: 18px;
+      transition: color .2s;
+    }
+    .nav-actions button:hover { color: var(--green-tech); }
+
+
+/* ── CONTAINER ── */
+.container{max-width:1200px;margin:0 auto;padding:0 48px;}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ════════════════════════════════════════
+   1. HERO BANNER
+════════════════════════════════════════ */
+.hero-detail{
+  margin-top:68px;
+  position:relative;
+  height:480px;overflow:hidden;
+}
+.hero-detail img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.75);
+}
+.hero-detail-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(0,30,90,.7) 0%,rgba(0,104,214,.35) 100%);
+  display:flex;flex-direction:column;
+  justify-content:center;padding:0 80px;
+}
+.hero-detail-overlay .breadcrumb{
+  font-size:12px;color:rgba(255,255,255,.6);font-weight:600;
+  letter-spacing:1px;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-detail-overlay .breadcrumb i{font-size:10px;}
+.hero-detail-overlay h1{
+  font-size:clamp(32px,4vw,58px);font-weight:900;color:#fff;
+  line-height:1.15;max-width:640px;
+}
+.hero-detail-overlay h1 span{color:var(--green-tech);}
+.hero-detail-overlay p{
+  margin-top:16px;font-size:15px;color:rgba(255,255,255,.72);
+  max-width:540px;line-height:1.7;
+}
+
+/* ════════════════════════════════════════
+   2. INTRO SECTION (ảnh + text)
+════════════════════════════════════════ */
+.intro{padding:90px 0;background:#fff;}
+.intro-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:70px;align-items:center;
+}
+.intro-img{
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,30,90,.15);
+  position:relative;
+}
+.intro-img img{width:100%;height:380px;object-fit:cover;}
+.intro-img-badge{
+  position:absolute;bottom:24px;left:24px;
+  background:var(--blue-deeper);color:#fff;
+  border-radius:12px;padding:14px 20px;
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.intro-img-badge i{color:var(--green-tech);font-size:20px;}
+.intro-text .label{
+  font-size:11px;font-weight:800;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--blue-mid);
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.intro-text .label::before{content:'';width:28px;height:3px;border-radius:2px;background:var(--blue-bright);}
+.intro-text h2{
+  font-size:clamp(24px,2.8vw,38px);font-weight:900;
+  color:var(--blue-deeper);line-height:1.25;margin-bottom:22px;
+}
+.intro-text h2 span{color:var(--blue-bright);}
+.intro-text p{
+  font-size:14px;color:#4a5f80;line-height:1.85;margin-bottom:14px;
+}
+.intro-text .btn-primary{
+  display:inline-flex;align-items:center;gap:10px;margin-top:10px;
+  background:var(--blue-bright);color:#fff;font-weight:700;font-size:13px;
+  letter-spacing:.8px;border-radius:8px;padding:13px 28px;
+  transition:all .3s;text-transform:uppercase;
+}
+.intro-text .btn-primary:hover{background:var(--green-tech);color:var(--blue-deeper);transform:translateY(-2px);}
+
+/* ════════════════════════════════════════
+   3. TẦM NHÌN / SỨ MỆNH / GIÁ TRỊ
+════════════════════════════════════════ */
+.vision-section{
+  background:var(--blue-deeper);
+  padding:90px 0;
+  position:relative;overflow:hidden;
+}
+.vision-section::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 10% 50%,rgba(26,140,255,.12) 0%,transparent 50%),
+    radial-gradient(circle at 90% 20%,rgba(0,230,138,.07) 0%,transparent 50%);
+}
+.vision-top{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:start;margin-bottom:70px;
+}
+.vision-top-text .label{
+  font-size:11px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:var(--green-tech);
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.vision-top-text .label::before{content:'';width:28px;height:3px;border-radius:2px;background:var(--green-tech);}
+.vision-top-text p{
+  font-size:14px;color:rgba(255,255,255,.65);line-height:1.85;
+}
+
+.vision-blocks{display:flex;flex-direction:column;gap:28px;}
+.vision-block{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:28px 32px;
+  transition:all .3s;
+}
+.vision-block:hover{background:rgba(255,255,255,.1);transform:translateX(6px);}
+.vision-block h3{
+  font-size:18px;font-weight:900;color:#fff;
+  letter-spacing:.5px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.vision-block h3 span.vb-tag{
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  background:rgba(0,230,138,.15);border:1px solid rgba(0,230,138,.3);
+  color:var(--green-tech);border-radius:20px;padding:3px 12px;
+  text-transform:uppercase;
+}
+.vision-block p{font-size:13.5px;color:rgba(255,255,255,.62);line-height:1.8;}
+
+/* Core values row */
+.core-values{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.core-values-title{
+  grid-column:1/-1;
+  font-size:14px;font-weight:800;color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;
+}
+.cv-card{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:28px 24px;text-align:center;
+  transition:all .35s;cursor:default;
+}
+.cv-card:hover{background:rgba(26,140,255,.15);border-color:rgba(26,140,255,.4);transform:translateY(-4px);}
+.cv-icon{
+  width:56px;height:56px;border-radius:14px;margin:0 auto 16px;
+  background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;
+}
+.cv-card h4{font-size:14px;font-weight:800;color:#fff;margin-bottom:8px;}
+.cv-card p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.65;}
+
+/* ════════════════════════════════════════
+   4. CƠ CẤU TỔ CHỨC
+════════════════════════════════════════ */
+.org-section{padding:90px 0;background:#fff;}
+.section-header{margin-bottom:56px;}
+.section-header .label{
+  font-size:11px;font-weight:800;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--blue-mid);
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.section-header .label::before{content:'';width:28px;height:3px;border-radius:2px;background:var(--blue-bright);}
+.section-header h2{
+  font-size:clamp(24px,2.8vw,38px);font-weight:900;
+  color:var(--blue-deeper);
+}
+.section-header p{font-size:14px;color:#5a6e8a;line-height:1.7;margin-top:10px;max-width:640px;}
+
+/* Org chart SVG */
+.org-chart-wrap{
+  background:var(--blue-deeper);
+  border-radius:20px;padding:50px 40px 40px;
+  margin-bottom:40px;position:relative;overflow:hidden;
+}
+.org-chart-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(26,140,255,.15) 0%,transparent 60%);
+}
+.org-title{
+  text-align:center;font-size:18px;font-weight:900;color:#fff;
+  letter-spacing:1px;margin-bottom:8px;
+}
+.org-sub{
+  text-align:center;font-size:12px;color:rgba(255,255,255,.5);
+  margin-bottom:48px;
+}
+
+/* Chart nodes */
+.org-tree{position:relative;display:flex;flex-direction:column;align-items:center;gap:0;}
+.org-row{display:flex;justify-content:center;gap:20px;position:relative;width:100%;}
+.org-node{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;padding:12px 20px;min-width:150px;
+  text-align:center;color:#fff;font-size:12px;font-weight:700;
+  transition:all .3s;cursor:pointer;position:relative;z-index:2;
+}
+.org-node:hover{background:rgba(26,140,255,.3);border-color:var(--blue-bright);}
+.org-node.top{
+  background:var(--blue-bright);border-color:var(--blue-bright);
+  font-size:13px;min-width:200px;padding:16px 28px;
+  box-shadow:0 8px 28px rgba(26,140,255,.4);
+}
+.org-node.mid{background:rgba(26,140,255,.2);border-color:rgba(26,140,255,.4);}
+.org-node .node-role{font-size:10px;color:rgba(255,255,255,.55);font-weight:500;margin-top:3px;}
+.org-connector{width:1px;height:36px;background:rgba(255,255,255,.25);margin:0 auto;}
+.org-h-line{
+  height:1px;background:rgba(255,255,255,.2);
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  z-index:1;
+}
+
+/* Org detail cards */
+.org-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
+.org-card{
+  padding:40px 36px;
+  border:1px solid rgba(26,140,255,.12);
+  cursor:pointer;transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.org-card:first-child{border-radius:16px 0 0 16px;}
+.org-card:last-child{border-radius:0 16px 16px 0;}
+.org-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue-bright),var(--green-tech));
+  transform:scaleX(0);transform-origin:left;transition:transform .35s;
+}
+.org-card:hover::before{transform:scaleX(1);}
+.org-card:hover{background:var(--gray-light);}
+.org-card h3{
+  font-size:18px;font-weight:900;color:var(--blue-bright);
+  margin-bottom:14px;
+}
+.org-card p{font-size:13px;color:#5a6e8a;line-height:1.75;margin-bottom:20px;}
+.org-expand-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--blue-mid);font-size:12px;font-weight:700;
+  letter-spacing:.5px;cursor:pointer;transition:gap .2s;
+}
+.org-card:hover .org-expand-btn{gap:10px;color:var(--blue-bright);}
+.org-expand-content{
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+}
+.org-expand-content.open{max-height:300px;}
+.org-expand-content ul{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.org-expand-content ul li{
+  font-size:12.5px;color:#4a5f80;
+  display:flex;align-items:center;gap:8px;
+}
+.org-expand-content ul li::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--blue-bright);flex-shrink:0;
+}
+
+/* ════════════════════════════════════════
+   5. ĐƠN VỊ TRỰC THUỘC
+════════════════════════════════════════ */
+.units-section{padding:90px 0;background:var(--gray-bg);}
+.units-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:24px;margin-top:8px;
+}
+.unit-card{
+  background:#fff;border-radius:16px;padding:32px 24px;
+  border:1px solid rgba(26,140,255,.1);
+  transition:all .35s;cursor:pointer;
+  display:flex;flex-direction:column;gap:16px;
+}
+.unit-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 48px rgba(26,140,255,.14);
+  border-color:var(--blue-bright);
+}
+.unit-icon{
+  width:52px;height:52px;border-radius:13px;
+  background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:22px;
+}
+.unit-card h4{font-size:14px;font-weight:800;color:var(--blue-deeper);line-height:1.3;}
+.unit-card .unit-role{font-size:11px;color:var(--blue-bright);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.unit-card p{font-size:12.5px;color:#6a7fa8;line-height:1.7;flex:1;}
+.unit-more{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--blue-mid);font-size:12px;font-weight:700;
+  transition:gap .2s;
+}
+.unit-card:hover .unit-more{gap:10px;color:var(--blue-bright);}
+
+/* ════════════════════════════════════════
+   6. HỆ SINH THÁI
+════════════════════════════════════════ */
+.ecosystem-section{
+  padding:90px 0;
+  background:linear-gradient(160deg,var(--blue-mid) 0%,var(--blue-deeper) 100%);
+  position:relative;overflow:hidden;
+}
+.ecosystem-section::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(0,230,138,.08) 0%,transparent 50%),
+    radial-gradient(circle at 20% 80%,rgba(26,140,255,.1) 0%,transparent 50%);
+}
+.ecosystem-section .section-header .label{color:var(--green-tech);}
+.ecosystem-section .section-header .label::before{background:var(--green-tech);}
+.ecosystem-section .section-header h2{color:#fff;}
+.ecosystem-section .section-header p{color:rgba(255,255,255,.65);}
+.ecosystem-img-wrap{
+  border-radius:20px;overflow:hidden;
+  border:2px solid rgba(255,255,255,.15);
+  box-shadow:0 24px 64px rgba(0,0,0,.35);
+  margin-top:8px;
+}
+.ecosystem-img-wrap img{width:100%;height:auto;display:block;}
+.ecosystem-caption{
+  margin-top:20px;text-align:center;
+  font-size:12px;color:rgba(255,255,255,.45);font-style:italic;
+}
+
+/* ════════════════════════════════════════
+   7. CONTACT
+════════════════════════════════════════ */
+.contact-section{padding:90px 0;background:var(--blue-deeper);}
+.contact-section::before{
+  content:'';display:block;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green-tech),transparent);
+  margin-bottom:90px;margin-top:-90px;
+}
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:start;
+}
+/* Left: image + get in touch */
+.contact-left{}
+.contact-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:2px;
+  color:rgba(255,255,255,.5);text-transform:uppercase;
+  margin-bottom:20px;
+}
+.contact-tag i{
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.contact-img-wrap{
+  border-radius:16px;overflow:hidden;
+  position:relative;height:280px;
+  box-shadow:0 16px 48px rgba(0,0,0,.4);
+}
+.contact-img-wrap img{width:100%;height:100%;object-fit:cover;filter:brightness(.6);}
+.contact-img-label{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.contact-img-label span{
+  background:#fff;color:var(--blue-deeper);
+  font-size:22px;font-weight:900;letter-spacing:1px;
+  padding:12px 32px;border-radius:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+
+/* Right: info */
+.contact-right{}
+.contact-right h2{
+  font-size:clamp(22px,2.5vw,34px);font-weight:900;color:#fff;
+  margin-bottom:32px;
+}
+.contact-block{margin-bottom:28px;}
+.contact-block h4{
+  font-size:12px;font-weight:800;color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;
+}
+.contact-block p,.contact-block a{
+  font-size:14px;color:rgba(255,255,255,.8);line-height:1.8;display:block;
+}
+.contact-block a:hover{color:var(--green-tech);}
+.contact-socials{display:flex;gap:12px;margin-top:8px;}
+.contact-socials a{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.7);font-size:17px;
+  transition:all .25s;
+}
+.contact-socials a:hover{background:var(--blue-bright);color:#fff;border-color:var(--blue-bright);}
+
+/* ── FOOTER ── */
+footer{
+  background:rgba(0,0,0,.3);padding:28px 0;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.footer-bottom-row{
+  display:flex;justify-content:space-between;align-items:center;
+}
+.footer-bottom-row p{font-size:12px;color:rgba(255,255,255,.3);}
+.footer-tag{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.3);}
+.footer-tag i{color:var(--green-tech);}
+
+/* ── Scroll Top ── */
+#scrollTop{
+  position:fixed;bottom:32px;right:32px;z-index:999;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--blue-bright);color:#fff;
+  border:none;cursor:pointer;font-size:20px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(26,140,255,.4);
+  opacity:0;transform:translateY(20px);transition:all .3s;
+}
+#scrollTop.visible{opacity:1;transform:none;}
+#scrollTop:hover{background:var(--green-tech);color:var(--blue-deeper);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .intro-grid,.vision-top,.contact-grid{grid-template-columns:1fr;}
+  .units-grid{grid-template-columns:1fr 1fr;}
+  .org-cards{grid-template-columns:1fr;}
+  .org-card:first-child{border-radius:16px 16px 0 0;}
+  .org-card:last-child{border-radius:0 0 16px 16px;}
+  .core-values{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .container{padding:0 24px;}
+  .hero-detail-overlay{padding:0 28px;}
+  .units-grid{grid-template-columns:1fr;}
+  .core-values{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<!-- ─── NAV ─────────────────────────────────────── -->
+<nav class="nav" id="mainNav">
+    <div class="nav-logo">
+      <a href="#" class="logo">
+          <img src="logo.jpg" alt="PHANO Logo" style="height: 56px; width: auto; display: block;">
+        </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about">Về chúng tôi</a></li>
+      <li><a href="#support">Chúng tôi làm gì?</a></li>
+      <li><a href="#stats">ALiSEA – Knowledge Hub</a></li>
+      <li><a href="#members">Hội viên</a></li>
+      <li><a href="#partners">Đối tác</a></li>
+      <li><a href="#news">Tin tức</a></li>
+      <li><a href="#contact" class="highlight">Liên hệ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button><i class="fa-solid fa-magnifying-glass"></i></button>
+      <button><i class="fa-solid fa-language"></i></button>
+    </div>
+  </nav>
+  
+
+<!-- ════ 1. HERO BANNER ════ -->
+<div class="hero-detail">
+  <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600&q=80" alt="PHANO Banner"/>
+  <div class="hero-detail-overlay">
+    <div class="breadcrumb">
+      <a href="index.html">Trang chủ</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Giới thiệu</span>
+    </div>
+    <h1>PHANO is built on our founders'<br/><span>unique outlook on agroecology</span></h1>
+    <p>Hội Khoa học Phát triển Nông thôn Việt Nam – kết nối khoa học, thúc đẩy đổi mới và xây dựng nông nghiệp sinh thái bền vững.</p>
+  </div>
+</div>
+
+<!-- ════ 2. GIỚI THIỆU ════ -->
+<section class="intro" id="about">
+  <div class="container">
+    <div class="intro-grid">
+      <div class="intro-img reveal">
+        <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=800&q=80" alt="PHANO"/>
+        <div class="intro-img-badge">
+          <i class="fa-solid fa-award"></i>
+          <div>
+            <div style="font-size:15px;font-weight:900;">10+ Năm</div>
+            <div style="font-size:11px;opacity:.7;font-weight:500;">Đồng hành cùng nông nghiệp</div>
+          </div>
+        </div>
+      </div>
+      <div class="intro-text reveal">
+        <div class="label"><i class="fa-solid fa-circle-dot"></i> Về PHANO</div>
+        <h2>Giới thiệu <span>đầy đủ, chi tiết</span> về PHANO</h2>
+        <p>PHANO is built on our founders' unique outlook on construction Anything that will introduce your brand's persona to your clients. This will help build a connection between you and them, that hopefully leads to a working relationship.</p>
+        <p>This will help build a connection between you and them, that hopefully leads to a working relationship. This will help build a connection between you and them, that hopefully leads to a working relationship. (Giới thiệu đầy đủ, chi tiết về PHANO)</p>
+        <a href="#contact" class="btn-primary"><i class="fa-solid fa-arrow-right"></i> Liên hệ với chúng tôi</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ 3. TẦM NHÌN / SỨ MỆNH / GIÁ TRỊ ════ -->
+<section class="vision-section" id="vision">
+  <div class="container" style="position:relative;z-index:1;">
+
+    <div class="vision-top">
+      <div class="vision-top-text reveal">
+        <div class="label"><i class="fa-solid fa-seedling"></i> Định hướng chiến lược</div>
+        <p>With roots in agriculture, I blend nature and creativity, drawing inspiration from the embracing the essence of rural artistry through each piece I create. With roots in agriculture, I blend nature and creativity, drawing inspiration from the…………………………</p>
+      </div>
+      <div class="vision-blocks reveal">
+        <div class="vision-block">
+          <h3>TẦM NHÌN <span class="vb-tag">Vision</span></h3>
+          <p>Embracing the essence of rural artistry through each piece I create. With roots in agriculture, I blend nature and creativity, drawing inspiration from the……………………</p>
+        </div>
+        <div class="vision-block">
+          <h3>SỨ MỆNH <span class="vb-tag">Mission</span></h3>
+          <p>Embracing the essence of rural artistry through each piece I create. With roots in agriculture, I blend nature and creativity, drawing inspiration from the…………………………</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Giá trị cốt lõi -->
+    <div class="core-values reveal">
+      <div class="core-values-title"><i class="fa-solid fa-star" style="color:var(--green-tech);margin-right:8px;"></i> Giá trị cốt lõi</div>
+      <div class="cv-card">
+        <div class="cv-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <h4>Nghiên cứu</h4>
+        <p>Ứng dụng khoa học và công nghệ tiên tiến vào phát triển nông nghiệp bền vững.</p>
+      </div>
+      <div class="cv-card">
+        <div class="cv-icon"><i class="fa-solid fa-lightbulb"></i></div>
+        <h4>Đổi mới sáng tạo</h4>
+        <p>Thúc đẩy tư duy đổi mới, ứng dụng giải pháp sáng tạo vào thực tiễn địa phương.</p>
+      </div>
+      <div class="cv-card">
+        <div class="cv-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+        <h4>Kết nối</h4>
+        <p>Xây dựng mạng lưới hợp tác giữa nhà khoa học, nông dân và tổ chức quốc tế.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ 4. CƠ CẤU TỔ CHỨC ════ -->
+<section class="org-section" id="org">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="label"><i class="fa-solid fa-sitemap"></i> Cơ cấu tổ chức</div>
+      <h2>How we work / Cơ cấu tổ chức</h2>
+      <p>Write a paragraph that talks about your construction company here. Convince your prospective clients to choose you and your team for their construction needs by talking about your unique services, as well as your commitment to getting the job done.</p>
+    </div>
+
+    <!-- Org Chart -->
+    <div class="org-chart-wrap reveal">
+      <div style="position:relative;z-index:1;">
+        <div class="org-title">Sơ đồ tổ chức PHANO</div>
+        <div class="org-sub">Mỗi ô sẽ có phòng/ban, vị trí/chức vụ, tên người phụ trách + học hàm/học vị</div>
+
+        <!-- Visual org chart using flexbox -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <!-- Level 1 -->
+          <div class="org-node top">Ban Chấp hành Hội<div class="node-role">Chủ tịch – GS.TS. Nguyễn Văn A</div></div>
+          <div class="org-connector"></div>
+          <!-- Level 2 -->
+          <div style="display:flex;gap:24px;position:relative;width:100%;justify-content:center;">
+            <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:rgba(255,255,255,.2);"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node mid">Ban Thường vụ<div class="node-role">PCT – PGS.TS. Trần B</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node mid">Ban Kiểm tra<div class="node-role">Trưởng ban – TS. Lê C</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node mid">Ban Hội viên<div class="node-role">Trưởng ban – ThS. Phạm D</div></div>
+            </div>
+          </div>
+          <div class="org-connector"></div>
+          <!-- Level 3 -->
+          <div style="display:flex;gap:16px;position:relative;width:100%;justify-content:center;">
+            <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:80%;height:1px;background:rgba(255,255,255,.15);"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node">Văn phòng Hội<div class="node-role">Chánh VP – CN. Hoa E</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node">Ban Khoa học<div class="node-role">Trưởng ban – TS. Minh F</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node">Ban Hợp tác QT<div class="node-role">Trưởng ban – GS. Lan G</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node">Ban Truyền thông<div class="node-role">Trưởng ban – ThS. Hùng H</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="org-connector" style="height:20px;"></div>
+              <div class="org-node">Ban Tài chính<div class="node-role">Trưởng ban – CPA. Nam I</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Org Cards with expand -->
+    <div class="org-cards reveal">
+      <div class="org-card" onclick="toggleOrg(this)">
+        <h3>General Assembly</h3>
+        <p>Mô tả thông tin ngắn gọn tại đây. Write a paragraph that talks about your construction company here.</p>
+        <div class="org-expand-btn"><span>&gt;&gt;&gt;</span> Xem chi tiết</div>
+        <div class="org-expand-content">
+          <ul>
+            <li>Cơ quan quyền lực cao nhất của Hội</li>
+            <li>Họp thường niên hoặc bất thường</li>
+            <li>Bầu Ban Chấp hành và Ban Kiểm tra</li>
+            <li>Thông qua Điều lệ và các nghị quyết</li>
+            <li>Quyết định phương hướng hoạt động</li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card" onclick="toggleOrg(this)">
+        <h3>Board of Council</h3>
+        <p>Mô tả thông tin ngắn gọn tại đây. Write a paragraph that talks about your construction company here.</p>
+        <div class="org-expand-btn"><span>&gt;&gt;&gt;</span> Xem chi tiết</div>
+        <div class="org-expand-content">
+          <ul>
+            <li>Ban Chấp hành điều hành hoạt động Hội</li>
+            <li>Gồm Chủ tịch, Phó Chủ tịch và Ủy viên</li>
+            <li>Họp định kỳ hàng quý</li>
+            <li>Phê duyệt các chương trình, dự án</li>
+            <li>Quản lý tài chính và tài sản Hội</li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card" onclick="toggleOrg(this)">
+        <h3>Working Group</h3>
+        <p>Mô tả thông tin ngắn gọn tại đây. Write a paragraph that talks about your construction company here.</p>
+        <div class="org-expand-btn"><span>&gt;&gt;&gt;</span> Xem chi tiết</div>
+        <div class="org-expand-content">
+          <ul>
+            <li>Nhóm chuyên môn theo từng lĩnh vực</li>
+            <li>Nghiên cứu, đề xuất giải pháp kỹ thuật</li>
+            <li>Triển khai các dự án thực địa</li>
+            <li>Kết nối với đối tác quốc tế</li>
+            <li>Báo cáo định kỳ lên Ban Chấp hành</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ 5. ĐƠN VỊ TRỰC THUỘC ════ -->
+<section class="units-section" id="units">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="label"><i class="fa-solid fa-building"></i> Đơn vị trực thuộc</div>
+      <h2>Các đơn vị trực thuộc</h2>
+      <p style="color:#5a6e8a;font-size:14px;margin-top:10px;">Nếu có ít thì làm 1 hàng, nhiều hơn thì làm 2, hoặc 3 hàng. Mỗi hàng có 4 đơn vị</p>
+    </div>
+    <div class="units-grid">
+      <div class="unit-card reveal">
+        <div class="unit-icon"><i class="fa-solid fa-at"></i></div>
+        <div class="unit-role">Trung tâm</div>
+        <h4>Tristan Clouss, Shutter Club NY</h4>
+        <p>Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <div class="unit-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <div class="unit-card reveal">
+        <div class="unit-icon" style="background:linear-gradient(135deg,#003a8c,#0068d6);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="unit-role">Viện nghiên cứu</div>
+        <h4>Shani Mensah, Vivarily</h4>
+        <p>Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <div class="unit-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <div class="unit-card reveal">
+        <div class="unit-icon" style="background:linear-gradient(135deg,#c45000,#ff6b1a);"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        <div class="unit-role">Ban chuyên môn</div>
+        <h4>Paisley Finwood</h4>
+        <p>Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <div class="unit-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <div class="unit-card reveal">
+        <div class="unit-icon" style="background:linear-gradient(135deg,#006b8c,#00b4d8);"><i class="fa-solid fa-diamond"></i></div>
+        <div class="unit-role">Mạng lưới</div>
+        <h4>Paisley Finwood</h4>
+        <p>Boost your product and service's credibility by adding testimonials from your clients. People love recommendations so feedback from others who've tried it is invaluable.</p>
+        <div class="unit-more">Xem thêm <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ 6. HỆ SINH THÁI ════ -->
+<section class="ecosystem-section" id="ecosystem">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-header reveal">
+      <div class="label"><i class="fa-solid fa-diagram-project"></i> Hệ sinh thái</div>
+      <h2>Hệ sinh thái và các bên liên quan</h2>
+      <p>Bản đồ hệ sinh thái đổi mới sáng tạo nông nghiệp – kết nối các tác nhân, dòng chảy tri thức và cơ chế vận hành trong chuỗi giá trị nông nghiệp bền vững.</p>
+    </div>
+    <div class="ecosystem-img-wrap reveal">
+      <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80" alt="Hệ sinh thái PHANO"
+           style="height:440px;object-fit:cover;"/>
+      <!-- placeholder – thay bằng ảnh infographic thực tế -->
+    </div>
+    <p class="ecosystem-caption">Bản đồ hệ sinh thái đổi mới sáng tạo nông nghiệp – thay thế bằng ảnh infographic thực tế</p>
+  </div>
+</section>
+
+<!-- ════ 7. CONTACT ════ -->
+<section class="contact-section" id="contact">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="contact-grid">
+
+      <div class="contact-left reveal">
+        <div class="contact-tag">
+          <i class="fa-solid fa-chevron-down"></i> Get in Touch
+        </div>
+        <div class="contact-img-wrap">
+          <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80" alt="Contact"/>
+          <div class="contact-img-label">
+            <span>Contact us</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-right reveal">
+        <h2>Liên hệ với chúng tôi</h2>
+
+        <div class="contact-block">
+          <h4>Headquarters</h4>
+          <p>123 Anywhere St., Any City, ST 12345</p>
+          <p>Hà Nội, Việt Nam</p>
+        </div>
+
+        <div class="contact-block">
+          <h4>Liên hệ trực tiếp</h4>
+          <a href="tel:+84243456789"><i class="fa-solid fa-phone" style="margin-right:8px;color:var(--blue-bright);"></i> Tel. (84) 24 3456-7890</a>
+          <a href="mailto:info@phano.vn"><i class="fa-solid fa-envelope" style="margin-right:8px;color:var(--blue-bright);"></i> info@phano.vn</a>
+          <a href="mailto:hello@phano.vn"><i class="fa-solid fa-envelope" style="margin-right:8px;color:var(--blue-bright);"></i> hello@reallygreatsite.com</a>
+        </div>
+
+        <div class="contact-block">
+          <h4>Office Hours</h4>
+          <p>Monday to Friday · 9:00 am to 5:00 pm</p>
+          <p>Weekends by appointment</p>
+        </div>
+
+        <div class="contact-block">
+          <h4>Social Media</h4>
+          <div class="contact-socials">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<button id="scrollTop"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+/* Nav scroll */
+const nav = document.getElementById('mainNav');
+const scrollTopBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+});
+scrollTopBtn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+
+/* Reveal */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 90);
+      observer.unobserve(e.target);
+    }
+  });
+}, {threshold: 0.1});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* Org card expand */
+function toggleOrg(card) {
+  const content = card.querySelector('.org-expand-content');
+  const isOpen = content.classList.contains('open');
+  document.querySelectorAll('.org-expand-content').forEach(c => c.classList.remove('open'));
+  if (!isOpen) content.classList.add('open');
+}
+</script>
+</body>
+</html>
