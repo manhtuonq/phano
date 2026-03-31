@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CheckBooking — Hotel Management</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { mont: ['Montserrat', 'sans-serif'] },
+        colors: {
+          primary: { DEFAULT:'#1a4fa0', dark:'#0f3578', light:'#2563eb', xlight:'#dbeafe' },
+          navy: '#0c2a5e',
+          sky: '#e8f0fe',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { font-family: 'Montserrat', sans-serif; }
+  body { background: #f0f4fb; }
+
+  /* Auth pages */
+  .auth-bg { background: #0f3578; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .auth-card { background: #fff; border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(15,53,120,0.18); }
+  .auth-logo { font-size: 26px; font-weight: 800; color: #1a4fa0; letter-spacing: -0.5px; }
+  .auth-logo span { color: #0f3578; }
+  .inp { width: 100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 11px 14px; font-size: 14px; font-family:'Montserrat',sans-serif; color: #1e293b; outline: none; transition: border .2s; }
+  .inp:focus { border-color: #1a4fa0; }
+  .btn-primary { width: 100%; background: #1a4fa0; color: #fff; border: none; border-radius: 8px; padding: 13px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background .2s; }
+  .btn-primary:hover { background: #0f3578; }
+  .link-blue { color: #1a4fa0; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .link-blue:hover { text-decoration: underline; }
+  .err { color: #dc2626; font-size: 12px; margin-top: 4px; }
+
+  /* Sidebar */
+  #sidebar { width: 240px; background: #0f3578; min-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
+  #sidebar .logo { padding: 24px 22px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  #sidebar .logo-text { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  #sidebar .logo-text span { color: #93c5fd; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 22px; cursor: pointer; color: rgba(255,255,255,0.65); font-size: 13.5px; font-weight: 500; transition: all .2s; border-left: 3px solid transparent; }
+  .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: #60a5fa; }
+  .nav-item i { width: 20px; text-align: center; font-size: 15px; }
+  .nav-section { padding: 14px 22px 6px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  /* Topbar */
+  #topbar { position: fixed; top: 0; left: 240px; right: 0; height: 64px; background: #fff; border-bottom: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; z-index: 90; }
+
+  /* Main content */
+  #main { margin-left: 240px; margin-top: 64px; padding: 28px; min-height: calc(100vh - 64px); }
+
+  /* Cards */
+  .stat-card { background: #fff; border-radius: 12px; padding: 22px 24px; border: 1.5px solid #e2e8f0; }
+  .stat-card .icon-wrap { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .section-card { background: #fff; border-radius: 12px; border: 1.5px solid #e2e8f0; overflow: hidden; }
+  .section-header { padding: 18px 24px; border-bottom: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-booking { background: #003580; color: #fff; }
+  .badge-agoda { background: #e31837; color: #fff; }
+  .badge-traveloka { background: #0064d2; color: #fff; }
+  .badge-avail { background: #dcfce7; color: #15803d; }
+  .badge-booked { background: #fee2e2; color: #dc2626; }
+  .badge-pending { background: #fef9c3; color: #92400e; }
+  .platform-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-booking { background: #003580; }
+  .dot-agoda { background: #e31837; }
+  .dot-traveloka { background: #0064d2; }
+
+  /* Notification panel */
+  #notif-panel { position: fixed; top: 64px; right: 0; width: 360px; height: calc(100vh - 64px); background: #fff; border-left: 1.5px solid #e2e8f0; z-index: 80; transform: translateX(100%); transition: transform .3s ease; overflow-y: auto; }
+  #notif-panel.open { transform: translateX(0); }
+  .notif-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background .15s; }
+  .notif-item:hover { background: #f8fafc; }
+  .notif-item.unread { background: #eff6ff; }
+  .notif-dot { width: 8px; height: 8px; background: #1a4fa0; border-radius: 50%; flex-shrink: 0; }
+  .notif-badge-count { position: absolute; top: -6px; right: -6px; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+  /* Messages */
+  .msg-item { padding: 14px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; gap: 12px; transition: background .15s; }
+  .msg-item:hover { background: #f8fafc; }
+  .msg-item.active { background: #eff6ff; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: #fff; flex-shrink: 0; }
+  .msg-bubble { max-width: 70%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+  .msg-bubble.in { background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 4px; }
+  .msg-bubble.out { background: #1a4fa0; color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .chat-area { height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 13px 16px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; }
+  tbody td { padding: 14px 16px; font-size: 13.5px; color: #334155; border-bottom: 1px solid #f1f5f9; }
+  tbody tr:hover td { background: #f8fafc; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* Pulse animation for realtime */
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+  .pulse { animation: pulse-dot 1.5s ease-in-out infinite; }
+  @keyframes slide-in { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .slide-in { animation: slide-in .35s ease forwards; }
+  @keyframes ring { 0%{transform:rotate(0)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(15deg)} 60%{transform:rotate(-10deg)} 80%{transform:rotate(5deg)} 100%{transform:rotate(0)} }
+  .ring { animation: ring .6s ease; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+
+  /* Revenue chart bars */
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .bar-inner { background: #1a4fa0; border-radius: 4px 4px 0 0; width: 100%; transition: height .5s ease; }
+
+  /* Toggle switch */
+  .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top:0;left:0;right:0;bottom:0; background:#cbd5e1; border-radius:24px; transition:.3s; }
+  .slider:before { content:''; position:absolute; height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s; }
+  input:checked + .slider { background: #1a4fa0; }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  /* View hidden */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Form input styled */
+  select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ AUTH PAGES ============================================================ -->
+<div id="auth-wrap">
+
+  <!-- LOGIN -->
+  <div id="page-login" class="auth-bg">
+    <div class="auth-card">
+      <div class="text-center mb-8">
+        <div class="auth-logo mb-1"><i class="fa-solid fa-hotel mr-2"></i>Check<span>Booking</span></div>
+        <p style="font-size:13px;color:#64748b;margin-top:8px;">Hệ thống quản trị phòng ốc đa nền tảng</p>
+      </div>
+      <div class="mb-4">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Email</label>
+        <input id="l-email" class="inp" type="email" placeholder="admin@checkbooking.vn"/>
+        <div id="l-email-err" class="err hidden">Vui lòng nhập email hợp lệ</div>
+      </div>
+      <div class="mb-2">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Mật khẩu</label>
+        <div style="position:relative;">
+          <input id="l-pass" class="inp" type="password" placeholder="••••••••" style="padding-right:42px;"/>
+          <i id="l-eye" onclick="toggleEye('l-pass','l-eye')" class="fa-solid fa-eye-slash" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;cursor:pointer;font-size:14px;"></i>
+        </div>
+        <div id="l-pass-err" class="err hidden">Mật khẩu phải ít nhất 6 ký tự</div>
+      </div>
+      <div class="flex justify-between items-center mb-6" style="font-size:13px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:#374151;font-weight:500;">
+          <input type="checkbox" style="accent-color:#1a4fa0;"> Ghi nhớ đăng nhập
+        </label>
+        <a class="link-blue">Quên mật khẩu?</a>
+      </div>
+      <button class="btn-primary" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập</button>
+      <p class="text-center mt-6" style="font-size:13px;color:#64748b;">Chưa có tài khoản? <a class="link-blue" onclick="showPage('page-register')">Đăng ký ngay</a></p>
+      <div id="l-err" class="err hidden text-center mt-3"></div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="page-register" class="auth-bg hidden">
+    <div class="auth-card">
+      <div class="text-center mb-8">
+        <div class="auth-logo mb-1"><i class="fa-solid fa-hotel mr-2"></i>Check<span>Booking</span></div>
+        <p style="font-size:13px;color:#64748b;margin-top:8px;">Tạo tài khoản quản trị mới</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Họ</label>
+          <input id="r-last" class="inp" type="text" placeholder="Nguyễn"/>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Tên</label>
+          <input id="r-first" class="inp" type="text" placeholder="Admin"/>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Email</label>
+        <input id="r-email" class="inp" type="email" placeholder="email@checkbooking.vn"/>
+        <div id="r-email-err" class="err hidden">Email đã được sử dụng hoặc không hợp lệ</div>
+      </div>
+      <div class="mb-4">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Vai trò</label>
+        <select id="r-role" class="inp select">
+          <option value="admin">Super Admin</option>
+          <option value="manager">Quản lý</option>
+          <option value="staff">Nhân viên</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Mật khẩu</label>
+        <div style="position:relative;">
+          <input id="r-pass" class="inp" type="password" placeholder="Tối thiểu 6 ký tự" style="padding-right:42px;"/>
+          <i id="r-eye" onclick="toggleEye('r-pass','r-eye')" class="fa-solid fa-eye-slash" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;cursor:pointer;font-size:14px;"></i>
+        </div>
+        <div id="r-pass-err" class="err hidden">Mật khẩu phải ít nhất 6 ký tự</div>
+      </div>
+      <div class="mb-6">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Xác nhận mật khẩu</label>
+        <input id="r-pass2" class="inp" type="password" placeholder="Nhập lại mật khẩu"/>
+        <div id="r-pass2-err" class="err hidden">Mật khẩu không khớp</div>
+      </div>
+      <button class="btn-primary" onclick="doRegister()"><i class="fa-solid fa-user-plus mr-2"></i>Tạo tài khoản</button>
+      <p class="text-center mt-6" style="font-size:13px;color:#64748b;">Đã có tài khoản? <a class="link-blue" onclick="showPage('page-login')">Đăng nhập</a></p>
+      <div id="r-ok" class="hidden text-center mt-3" style="color:#15803d;font-size:13px;font-weight:600;"></div>
+    </div>
+  </div>
+
+</div><!-- end auth-wrap -->
+
+
+<!-- ============================================================ DASHBOARD ============================================================ -->
+<div id="app-wrap" class="hidden">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="logo">
+      <div class="logo-text"><i class="fa-solid fa-hotel mr-2"></i>Check<span>Booking</span></div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:4px;font-weight:500;">Hotel Management System</p>
+    </div>
+
+    <div style="padding:14px 0; flex:1; overflow-y:auto;">
+      <div class="nav-section">Tổng quan</div>
+      <div class="nav-item active" onclick="navTo('v-dashboard',this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
+      <div class="nav-item" onclick="navTo('v-rooms',this)"><i class="fa-solid fa-door-open"></i> Quản lý phòng</div>
+      <div class="nav-item" onclick="navTo('v-bookings',this)"><i class="fa-solid fa-calendar-check"></i> Đặt phòng</div>
+
+      <div class="nav-section mt-2">Nền tảng</div>
+      <div class="nav-item" onclick="navTo('v-messages',this)"><i class="fa-solid fa-comments"></i> Tin nhắn <span id="msg-count" style="margin-left:auto;background:#dc2626;color:#fff;border-radius:20px;padding:1px 7px;font-size:10px;font-weight:700;">3</span></div>
+      <div class="nav-item" onclick="navTo('v-revenue',this)"><i class="fa-solid fa-chart-line"></i> Doanh thu</div>
+      <div class="nav-item" onclick="navTo('v-staff',this)"><i class="fa-solid fa-users"></i> Nhân viên</div>
+      <div class="nav-item" onclick="navTo('v-api',this)"><i class="fa-solid fa-plug"></i> Kết nối API</div>
+
+      <div class="nav-section mt-2">Hệ thống</div>
+      <div class="nav-item" onclick="navTo('v-settings',this)"><i class="fa-solid fa-gear"></i> Cài đặt</div>
+    </div>
+
+    <!-- User info at bottom -->
+    <div style="padding:16px 22px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;">
+      <div class="avatar" id="sb-avatar" style="background:#1a56db;width:36px;height:36px;font-size:13px;">A</div>
+      <div style="flex:1;min-width:0;">
+        <div id="sb-name" style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Admin</div>
+        <div id="sb-role" style="font-size:11px;color:rgba(255,255,255,0.5);">Super Admin</div>
+      </div>
+      <i class="fa-solid fa-right-from-bracket" onclick="doLogout()" style="color:rgba(255,255,255,0.45);cursor:pointer;font-size:14px;" title="Đăng xuất"></i>
+    </div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="position:relative;">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
+        <input type="text" placeholder="Tìm kiếm phòng, booking, khách..." style="border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 14px 8px 36px;font-size:13px;font-family:'Montserrat',sans-serif;color:#334155;outline:none;width:280px;" onfocus="this.style.borderColor='#1a4fa0'" onblur="this.style.borderColor='#e2e8f0'"/>
+      </div>
+      <!-- Real-time indicator -->
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#f0f4fb;border-radius:8px;border:1.5px solid #e2e8f0;">
+        <span class="platform-dot dot-booking pulse"></span>
+        <span style="font-size:11px;font-weight:600;color:#334155;">LIVE</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <!-- Platform pills -->
+      <div style="display:flex;gap:6px;">
+        <span class="badge badge-booking" style="font-size:10px;"><i class="fa-solid fa-circle mr-1" style="font-size:6px;"></i>Booking</span>
+        <span class="badge badge-agoda" style="font-size:10px;"><i class="fa-solid fa-circle mr-1" style="font-size:6px;"></i>Agoda</span>
+        <span class="badge badge-traveloka" style="font-size:10px;"><i class="fa-solid fa-circle mr-1" style="font-size:6px;"></i>Traveloka</span>
+      </div>
+      <!-- Notif bell -->
+      <div style="position:relative;cursor:pointer;" onclick="toggleNotif()">
+        <i id="bell-icon" class="fa-solid fa-bell" style="font-size:18px;color:#64748b;"></i>
+        <span id="notif-count" class="notif-badge-count">5</span>
+      </div>
+      <!-- User avatar topbar -->
+      <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <div class="avatar" id="top-avatar" style="background:#1a4fa0;width:34px;height:34px;font-size:13px;">A</div>
+        <div>
+          <div id="top-name" style="font-size:13px;font-weight:600;color:#1e293b;line-height:1.2;">Admin</div>
+          <div style="font-size:11px;color:#94a3b8;">Super Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div id="notif-panel">
+    <div style="padding:18px 20px;border-bottom:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:15px;font-weight:700;color:#0f172a;">Thông báo <span style="font-size:12px;color:#1a4fa0;font-weight:600;">(5 mới)</span></div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span style="font-size:12px;color:#1a4fa0;font-weight:600;cursor:pointer;">Đánh dấu đã đọc</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;color:#64748b;font-size:16px;" onclick="toggleNotif()"></i>
+      </div>
+    </div>
+    <div id="notif-list"></div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main">
+
+    <!-- ===== VIEW: DASHBOARD ===== -->
+    <div id="v-dashboard" class="view active">
+      <div style="margin-bottom:22px;">
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Tổng quan hệ thống</h1>
+        <p style="font-size:13px;color:#64748b;margin-top:3px;">Cập nhật realtime từ Booking.com · Agoda · Traveloka</p>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-4 gap-5 mb-6">
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <span style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;">Tổng phòng</span>
+            <div class="icon-wrap" style="background:#eff6ff;color:#1a4fa0;"><i class="fa-solid fa-door-open"></i></div>
+          </div>
+          <div style="font-size:30px;font-weight:800;color:#0f172a;" id="stat-total">20</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Trên 3 nền tảng</div>
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <span style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;">Phòng trống</span>
+            <div class="icon-wrap" style="background:#dcfce7;color:#15803d;"><i class="fa-solid fa-circle-check"></i></div>
+          </div>
+          <div style="font-size:30px;font-weight:800;color:#15803d;" id="stat-avail">12</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Sẵn sàng nhận khách</div>
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <span style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;">Đã đặt</span>
+            <div class="icon-wrap" style="background:#fee2e2;color:#dc2626;"><i class="fa-solid fa-calendar-check"></i></div>
+          </div>
+          <div style="font-size:30px;font-weight:800;color:#dc2626;" id="stat-booked">8</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;"><span class="platform-dot dot-booking"></span> 4 &nbsp;<span class="platform-dot dot-agoda"></span> 2 &nbsp;<span class="platform-dot dot-traveloka"></span> 2</div>
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <span style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;">Doanh thu hôm nay</span>
+            <div class="icon-wrap" style="background:#fef9c3;color:#92400e;"><i class="fa-solid fa-coins"></i></div>
+          </div>
+          <div style="font-size:30px;font-weight:800;color:#0f172a;" id="stat-rev">8.4M</div>
+          <div style="font-size:12px;color:#15803d;margin-top:4px;"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+12% so hôm qua</div>
+        </div>
+      </div>
+
+      <!-- Platform breakdown + Recent bookings -->
+      <div class="grid grid-cols-3 gap-5 mb-6">
+        <!-- Platform rooms -->
+        <div class="section-card">
+          <div class="section-header">
+            <span style="font-size:14px;font-weight:700;color:#0f172a;">Phòng theo nền tảng</span>
+          </div>
+          <div style="padding:20px;">
+            <div id="platform-bars"></div>
+            <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px;" id="platform-legend"></div>
+          </div>
+        </div>
+
+        <!-- Recent bookings -->
+        <div class="section-card col-span-2">
+          <div class="section-header">
+            <span style="font-size:14px;font-weight:700;color:#0f172a;">Booking gần đây</span>
+            <button onclick="navTo('v-bookings',null)" style="font-size:12px;color:#1a4fa0;font-weight:600;background:none;border:none;cursor:pointer;">Xem tất cả <i class="fa-solid fa-arrow-right ml-1"></i></button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Khách hàng</th><th>Phòng</th><th>Nền tảng</th><th>Check-in</th><th>Trạng thái</th></tr>
+            </thead>
+            <tbody id="recent-bookings"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Messages preview & Staff status -->
+      <div class="grid grid-cols-2 gap-5">
+        <div class="section-card">
+          <div class="section-header">
+            <span style="font-size:14px;font-weight:700;color:#0f172a;">Tin nhắn mới nhất</span>
+            <button onclick="navTo('v-messages',null)" style="font-size:12px;color:#1a4fa0;font-weight:600;background:none;border:none;cursor:pointer;">Xem tất cả</button>
+          </div>
+          <div id="dash-msgs"></div>
+        </div>
+        <div class="section-card">
+          <div class="section-header">
+            <span style="font-size:14px;font-weight:700;color:#0f172a;">Nhân viên đang trực</span>
+            <button onclick="navTo('v-staff',null)" style="font-size:12px;color:#1a4fa0;font-weight:600;background:none;border:none;cursor:pointer;">Xem tất cả</button>
+          </div>
+          <div style="padding:14px 20px;" id="dash-staff"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: ROOMS ===== -->
+    <div id="v-rooms" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+        <div>
+          <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Quản lý phòng</h1>
+          <p style="font-size:13px;color:#64748b;margin-top:3px;">Tổng hợp phòng từ tất cả nền tảng</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select onchange="filterRooms(this.value)" style="border:1.5px solid #e2e8f0;border-radius:8px;padding:9px 14px;font-size:13px;font-family:'Montserrat',sans-serif;color:#334155;outline:none;cursor:pointer;">
+            <option value="all">Tất cả nền tảng</option>
+            <option value="booking">Booking.com</option>
+            <option value="agoda">Agoda</option>
+            <option value="traveloka">Traveloka</option>
+          </select>
+          <select onchange="filterRoomStatus(this.value)" style="border:1.5px solid #e2e8f0;border-radius:8px;padding:9px 14px;font-size:13px;font-family:'Montserrat',sans-serif;color:#334155;outline:none;cursor:pointer;">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="available">Phòng trống</option>
+            <option value="booked">Đã đặt</option>
+            <option value="maintenance">Bảo trì</option>
+          </select>
+        </div>
+      </div>
+      <!-- Room grid -->
+      <div id="rooms-grid" class="grid grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- ===== VIEW: BOOKINGS ===== -->
+    <div id="v-bookings" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+        <div>
+          <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Quản lý đặt phòng</h1>
+          <p style="font-size:13px;color:#64748b;margin-top:3px;">Tất cả booking từ 3 nền tảng</p>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-header">
+          <div style="display:flex;gap:8px;">
+            <button onclick="filterBookingTab('all',this)" class="tab-btn active" style="padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;border:1.5px solid #1a4fa0;background:#1a4fa0;color:#fff;cursor:pointer;">Tất cả</button>
+            <button onclick="filterBookingTab('confirmed',this)" class="tab-btn" style="padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;">Confirmed</button>
+            <button onclick="filterBookingTab('pending',this)" class="tab-btn" style="padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;">Pending</button>
+            <button onclick="filterBookingTab('cancelled',this)" class="tab-btn" style="padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;">Cancelled</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Booking ID</th><th>Khách hàng</th><th>Phòng</th><th>Nền tảng</th><th>Check-in</th><th>Check-out</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+          <tbody id="booking-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: MESSAGES ===== -->
+    <div id="v-messages" class="view">
+      <div style="margin-bottom:22px;">
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Tin nhắn khách hàng</h1>
+        <p style="font-size:13px;color:#64748b;margin-top:3px;">Realtime từ Booking.com · Agoda · Traveloka</p>
+      </div>
+      <div class="section-card" style="display:flex;height:520px;">
+        <!-- Contacts list -->
+        <div style="width:280px;border-right:1.5px solid #e2e8f0;overflow-y:auto;flex-shrink:0;">
+          <div style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+            <input type="text" placeholder="Tìm khách hàng..." style="border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Montserrat',sans-serif;width:100%;outline:none;" onfocus="this.style.borderColor='#1a4fa0'" onblur="this.style.borderColor='#e2e8f0'"/>
+          </div>
+          <div id="msg-contacts"></div>
+        </div>
+        <!-- Chat window -->
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div id="chat-header" style="padding:14px 20px;border-bottom:1.5px solid #e2e8f0;display:flex;align-items:center;gap:12px;">
+            <div class="avatar" id="chat-avatar" style="background:#1a4fa0;width:38px;height:38px;font-size:14px;">K</div>
+            <div>
+              <div id="chat-name" style="font-size:14px;font-weight:700;color:#0f172a;">Chọn cuộc trò chuyện</div>
+              <div id="chat-platform" style="font-size:11px;color:#64748b;"></div>
+            </div>
+          </div>
+          <div class="chat-area" id="chat-body"></div>
+          <div style="padding:14px 16px;border-top:1.5px solid #e2e8f0;display:flex;gap:10px;">
+            <input id="chat-input" type="text" placeholder="Nhập tin nhắn trả lời..." style="flex:1;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;" onfocus="this.style.borderColor='#1a4fa0'" onblur="this.style.borderColor='#e2e8f0'" onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button onclick="sendMsg()" style="background:#1a4fa0;color:#fff;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-weight:700;font-size:13px;"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: REVENUE ===== -->
+    <div id="v-revenue" class="view">
+      <div style="margin-bottom:22px;">
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Doanh thu</h1>
+        <p style="font-size:13px;color:#64748b;margin-top:3px;">Tổng hợp doanh thu từ 3 nền tảng</p>
+      </div>
+      <div class="grid grid-cols-3 gap-5 mb-6">
+        <div class="stat-card" style="border-left:4px solid #003580;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span class="badge badge-booking">Booking.com</span></div>
+          <div style="font-size:26px;font-weight:800;color:#0f172a;">32.5M</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Tháng này</div>
+          <div style="font-size:12px;color:#15803d;margin-top:2px;"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+8% tháng trước</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #e31837;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span class="badge badge-agoda">Agoda</span></div>
+          <div style="font-size:26px;font-weight:800;color:#0f172a;">18.2M</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Tháng này</div>
+          <div style="font-size:12px;color:#15803d;margin-top:2px;"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+5% tháng trước</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #0064d2;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span class="badge badge-traveloka">Traveloka</span></div>
+          <div style="font-size:26px;font-weight:800;color:#0f172a;">14.8M</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Tháng này</div>
+          <div style="font-size:12px;color:#dc2626;margin-top:2px;"><i class="fa-solid fa-arrow-trend-down mr-1"></i>-2% tháng trước</div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-header">
+          <span style="font-size:14px;font-weight:700;color:#0f172a;">Biểu đồ doanh thu 7 ngày gần nhất</span>
+          <div style="display:flex;gap:14px;font-size:12px;font-weight:600;">
+            <span><span class="platform-dot dot-booking" style="display:inline-block;"></span> Booking</span>
+            <span><span class="platform-dot dot-agoda" style="display:inline-block;"></span> Agoda</span>
+            <span><span class="platform-dot dot-traveloka" style="display:inline-block;"></span> Traveloka</span>
+          </div>
+        </div>
+        <div style="padding:28px 24px;" id="revenue-chart"></div>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: STAFF ===== -->
+    <div id="v-staff" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+        <div>
+          <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Quản lý nhân viên</h1>
+          <p style="font-size:13px;color:#64748b;margin-top:3px;">Nhân viên đang trực trên hệ thống & các nền tảng</p>
+        </div>
+      </div>
+      <div class="section-card">
+        <table>
+          <thead><tr><th>Nhân viên</th><th>Vai trò</th><th>Booking.com</th><th>Agoda</th><th>Traveloka</th><th>Website</th><th>Ca làm</th><th>Trạng thái</th></tr></thead>
+          <tbody id="staff-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: API ===== -->
+    <div id="v-api" class="view">
+      <div style="margin-bottom:22px;">
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Kết nối API</h1>
+        <p style="font-size:13px;color:#64748b;margin-top:3px;">Quản lý kết nối với các nền tảng đặt phòng</p>
+      </div>
+      <div class="grid grid-cols-3 gap-5 mb-6">
+        <!-- Booking.com API -->
+        <div class="section-card">
+          <div style="padding:24px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+              <div style="width:44px;height:44px;background:#003580;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-b" style="color:#fff;font-size:20px;font-weight:900;"></i></div>
+              <div><div style="font-size:15px;font-weight:700;color:#0f172a;">Booking.com</div><div style="font-size:11px;color:#15803d;"><span class="platform-dot dot-booking pulse" style="display:inline-block;"></span> Đã kết nối</div></div>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">API Key</label>
+              <input type="password" value="bk_live_xxxxxxxxxxxxxxxxxxxx" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">Property ID</label>
+              <input type="text" value="PROP-8821764" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div style="display:flex;gap:2px;align-items:center;font-size:12px;color:#64748b;margin-bottom:16px;"><i class="fa-solid fa-circle-check mr-2" style="color:#15803d;"></i>Webhook realtime đang hoạt động</div>
+            <button style="width:100%;padding:9px;border:1.5px solid #1a4fa0;border-radius:8px;background:#fff;color:#1a4fa0;font-size:13px;font-weight:600;cursor:pointer;" onclick="testApi('Booking.com')"><i class="fa-solid fa-rotate mr-2"></i>Test kết nối</button>
+          </div>
+        </div>
+        <!-- Agoda API -->
+        <div class="section-card">
+          <div style="padding:24px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+              <div style="width:44px;height:44px;background:#e31837;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-a" style="color:#fff;font-size:20px;font-weight:900;"></i></div>
+              <div><div style="font-size:15px;font-weight:700;color:#0f172a;">Agoda</div><div style="font-size:11px;color:#15803d;"><span class="platform-dot dot-agoda pulse" style="display:inline-block;"></span> Đã kết nối</div></div>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">API Key</label>
+              <input type="password" value="ag_live_xxxxxxxxxxxxxxxxxxxx" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">Hotel ID</label>
+              <input type="text" value="HTL-20193847" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div style="display:flex;gap:2px;align-items:center;font-size:12px;color:#64748b;margin-bottom:16px;"><i class="fa-solid fa-circle-check mr-2" style="color:#15803d;"></i>Webhook realtime đang hoạt động</div>
+            <button style="width:100%;padding:9px;border:1.5px solid #1a4fa0;border-radius:8px;background:#fff;color:#1a4fa0;font-size:13px;font-weight:600;cursor:pointer;" onclick="testApi('Agoda')"><i class="fa-solid fa-rotate mr-2"></i>Test kết nối</button>
+          </div>
+        </div>
+        <!-- Traveloka API -->
+        <div class="section-card">
+          <div style="padding:24px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+              <div style="width:44px;height:44px;background:#0064d2;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-t" style="color:#fff;font-size:20px;font-weight:900;"></i></div>
+              <div><div style="font-size:15px;font-weight:700;color:#0f172a;">Traveloka</div><div style="font-size:11px;color:#92400e;"><span style="width:8px;height:8px;background:#f59e0b;border-radius:50%;display:inline-block;margin-right:4px;"></span> Đang đồng bộ</div></div>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">API Key</label>
+              <input type="password" value="tv_live_xxxxxxxxxxxxxxxxxxxx" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div class="mb-3">
+              <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;">Property Code</label>
+              <input type="text" value="TV-561290" class="inp" style="font-size:12px;" readonly/>
+            </div>
+            <div style="display:flex;gap:2px;align-items:center;font-size:12px;color:#92400e;margin-bottom:16px;"><i class="fa-solid fa-rotate fa-spin mr-2"></i>Đang đồng bộ dữ liệu...</div>
+            <button style="width:100%;padding:9px;border:1.5px solid #1a4fa0;border-radius:8px;background:#fff;color:#1a4fa0;font-size:13px;font-weight:600;cursor:pointer;" onclick="testApi('Traveloka')"><i class="fa-solid fa-rotate mr-2"></i>Test kết nối</button>
+          </div>
+        </div>
+      </div>
+      <!-- Sync log -->
+      <div class="section-card">
+        <div class="section-header"><span style="font-size:14px;font-weight:700;color:#0f172a;">Lịch sử đồng bộ</span></div>
+        <div style="padding:16px 24px;font-family:monospace;font-size:12px;color:#334155;line-height:2;" id="sync-log"></div>
+      </div>
+    </div>
+
+    <!-- ===== VIEW: SETTINGS ===== -->
+    <div id="v-settings" class="view">
+      <div style="margin-bottom:22px;">
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;">Cài đặt hệ thống</h1>
+        <p style="font-size:13px;color:#64748b;margin-top:3px;">Cấu hình thông báo & tài khoản</p>
+      </div>
+      <div class="grid grid-cols-2 gap-5">
+        <div class="section-card">
+          <div class="section-header"><span style="font-size:14px;font-weight:700;color:#0f172a;">Thông báo realtime</span></div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;font-weight:600;color:#1e293b;">Thông báo đặt phòng mới</div><div style="font-size:12px;color:#64748b;">Nhận ngay khi có khách đặt</div></div>
+              <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;font-weight:600;color:#1e293b;">Thông báo tin nhắn mới</div><div style="font-size:12px;color:#64748b;">Khi khách nhắn qua các nền tảng</div></div>
+              <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;font-weight:600;color:#1e293b;">Thông báo hủy phòng</div><div style="font-size:12px;color:#64748b;">Cảnh báo khi booking bị hủy</div></div>
+              <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;font-weight:600;color:#1e293b;">Âm thanh thông báo</div><div style="font-size:12px;color:#64748b;">Phát âm khi có thông báo mới</div></div>
+              <label class="toggle"><input type="checkbox"/><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-header"><span style="font-size:14px;font-weight:700;color:#0f172a;">Thông tin tài khoản</span></div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+            <div><label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Tên hiển thị</label><input id="s-name" class="inp" type="text" value="Nguyễn Admin"/></div>
+            <div><label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Email</label><input id="s-email" class="inp" type="email" value="admin@checkbooking.vn"/></div>
+            <div><label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Tên khách sạn</label><input class="inp" type="text" value="CheckBooking Hotel"/></div>
+            <button onclick="saveSettings()" style="background:#1a4fa0;color:#fff;border:none;border-radius:8px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;margin-top:4px;"><i class="fa-solid fa-floppy-disk mr-2"></i>Lưu thay đổi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main -->
+</div><!-- end app-wrap -->
+
+<!-- Toast container -->
+<div id="toast-wrap" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;"></div>
+
+<script>
+// =====================================================================
+// DATA
+// =====================================================================
+const USERS_KEY = 'cb_users';
+const SESSION_KEY = 'cb_session';
+
+function getUsers() { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function getSession() { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+function setSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// Seed a default admin if no users
+(function() {
+  const users = getUsers();
+  if (!users.length) {
+    saveUsers([{ email:'admin@checkbooking.vn', pass:'admin123', first:'Admin', last:'Nguyễn', role:'admin' }]);
+  }
+})();
+
+// Mock rooms
+const rooms = [
+  { id:'P101', type:'Standard', platform:'booking', status:'booked',   price:'650K', guest:'Trần Minh Khoa', checkin:'01/04', checkout:'03/04' },
+  { id:'P102', type:'Standard', platform:'agoda',   status:'available', price:'650K', guest:'', checkin:'', checkout:'' },
+  { id:'P103', type:'Deluxe',   platform:'booking', status:'booked',   price:'950K', guest:'Lê Thị Hoa',    checkin:'31/03', checkout:'02/04' },
+  { id:'P104', type:'Deluxe',   platform:'traveloka',status:'available',price:'950K', guest:'', checkin:'', checkout:'' },
+  { id:'P105', type:'Suite',    platform:'booking', status:'booked',   price:'1.8M', guest:'Phạm Quốc Hùng',checkin:'30/03', checkout:'04/04' },
+  { id:'P106', type:'Suite',    platform:'agoda',   status:'available',price:'1.8M', guest:'', checkin:'', checkout:'' },
+  { id:'P201', type:'Standard', platform:'traveloka',status:'booked',  price:'650K', guest:'Đỗ Thị Lan',   checkin:'01/04', checkout:'02/04' },
+  { id:'P202', type:'Standard', platform:'booking', status:'available',price:'650K', guest:'', checkin:'', checkout:'' },
+  { id:'P203', type:'Deluxe',   platform:'agoda',   status:'booked',   price:'950K', guest:'Vũ Đình Nam',   checkin:'31/03', checkout:'05/04' },
+  { id:'P204', type:'Deluxe',   platform:'traveloka',status:'maintenance',price:'950K', guest:'', checkin:'', checkout:'' },
+  { id:'P205', type:'Standard', platform:'booking', status:'available',price:'650K', guest:'', checkin:'', checkout:'' },
+  { id:'P206', type:'Suite',    platform:'agoda',   status:'available',price:'1.8M', guest:'', checkin:'', checkout:'' },
+  { id:'P301', type:'Standard', platform:'traveloka',status:'available',price:'650K', guest:'', checkin:'', checkout:'' },
+  { id:'P302', type:'Standard', platform:'booking', status:'booked',   price:'650K', guest:'Nguyễn Thị Bích',checkin:'01/04', checkout:'03/04' },
+  { id:'P303', type:'Deluxe',   platform:'agoda',   status:'available',price:'950K', guest:'', checkin:'', checkout:'' },
+  { id:'P304', type:'Deluxe',   platform:'traveloka',status:'booked',  price:'950K', guest:'Hoàng Văn Dũng',checkin:'30/03', checkout:'02/04' },
+  { id:'P305', type:'Suite',    platform:'booking', status:'available',price:'1.8M', guest:'', checkin:'', checkout:'' },
+  { id:'P306', type:'Standard', platform:'agoda',   status:'available',price:'650K', guest:'', checkin:'', checkout:'' },
+  { id:'P401', type:'Deluxe',   platform:'traveloka',status:'available',price:'950K', guest:'', checkin:'', checkout:'' },
+  { id:'P402', type:'Suite',    platform:'booking', status:'booked',   price:'1.8M', guest:'Bùi Thị Thu',   checkin:'31/03', checkout:'04/04' },
+];
+
+const bookings = [
+  { id:'BK-00134', guest:'Trần Minh Khoa',   room:'P101', platform:'booking',   checkin:'01/04/2025', checkout:'03/04/2025', total:'1.300K', status:'confirmed' },
+  { id:'BK-00135', guest:'Lê Thị Hoa',       room:'P103', platform:'booking',   checkin:'31/03/2025', checkout:'02/04/2025', total:'1.900K', status:'confirmed' },
+  { id:'BK-00136', guest:'Phạm Quốc Hùng',   room:'P105', platform:'booking',   checkin:'30/03/2025', checkout:'04/04/2025', total:'9.000K', status:'confirmed' },
+  { id:'BK-00137', guest:'Đỗ Thị Lan',       room:'P201', platform:'traveloka', checkin:'01/04/2025', checkout:'02/04/2025', total:'650K',   status:'pending' },
+  { id:'BK-00138', guest:'Vũ Đình Nam',       room:'P203', platform:'agoda',     checkin:'31/03/2025', checkout:'05/04/2025', total:'4.750K', status:'confirmed' },
+  { id:'BK-00139', guest:'Nguyễn Thị Bích',  room:'P302', platform:'booking',   checkin:'01/04/2025', checkout:'03/04/2025', total:'1.300K', status:'pending' },
+  { id:'BK-00140', guest:'Hoàng Văn Dũng',   room:'P304', platform:'traveloka', checkin:'30/03/2025', checkout:'02/04/2025', total:'2.850K', status:'confirmed' },
+  { id:'BK-00141', guest:'Bùi Thị Thu',      room:'P402', platform:'booking',   checkin:'31/03/2025', checkout:'04/04/2025', total:'7.200K', status:'confirmed' },
+  { id:'BK-00130', guest:'Mai Văn Trung',     room:'P106', platform:'agoda',     checkin:'25/03/2025', checkout:'28/03/2025', total:'5.400K', status:'cancelled' },
+  { id:'BK-00131', guest:'Đinh Thị Nga',      room:'P201', platform:'traveloka', checkin:'26/03/2025', checkout:'27/03/2025', total:'650K',   status:'cancelled' },
+];
+
+const contacts = [
+  { id:1, name:'Trần Minh Khoa', platform:'booking', avatar:'K', color:'#003580', unread:2, msgs:[
+    { from:'guest', text:'Cho tôi hỏi phòng có view biển không?', time:'09:12' },
+    { from:'admin', text:'Dạ phòng P101 của bạn có view biển rất đẹp ạ!', time:'09:15' },
+    { from:'guest', text:'Tuyệt vời! Tôi muốn thêm 1 giường phụ được không?', time:'09:20' },
+    { from:'guest', text:'Và cho hỏi giờ check-in là mấy giờ?', time:'09:21' },
+  ]},
+  { id:2, name:'Vũ Đình Nam', platform:'agoda', avatar:'N', color:'#e31837', unread:1, msgs:[
+    { from:'guest', text:'Xin chào, tôi muốn xác nhận booking của mình', time:'10:05' },
+    { from:'admin', text:'Chào bạn! Booking BK-00138 đã được xác nhận ạ', time:'10:08' },
+    { from:'guest', text:'Cảm ơn. Tôi có thể check-in sớm hơn 14h không?', time:'10:30' },
+  ]},
+  { id:3, name:'Đỗ Thị Lan', platform:'traveloka', avatar:'L', color:'#0064d2', unread:0, msgs:[
+    { from:'guest', text:'Phòng có bao gồm bữa sáng không?', time:'08:45' },
+    { from:'admin', text:'Dạ có ạ, bữa sáng buffet từ 6:30-9:30 AM', time:'08:50' },
+    { from:'guest', text:'Okay cảm ơn bạn nhé!', time:'08:52' },
+  ]},
+  { id:4, name:'Nguyễn Thị Bích', platform:'booking', avatar:'B', color:'#003580', unread:0, msgs:[
+    { from:'guest', text:'Tôi có thể hủy booking và nhận lại tiền không?', time:'14:10' },
+    { from:'admin', text:'Theo chính sách của Booking.com, bạn có thể hủy miễn phí trước 24h check-in ạ', time:'14:15' },
+  ]},
+  { id:5, name:'Hoàng Văn Dũng', platform:'traveloka', avatar:'D', color:'#0064d2', unread:0, msgs:[
+    { from:'guest', text:'Khách sạn có chỗ đậu xe không?', time:'11:00' },
+    { from:'admin', text:'Dạ có ạ, bãi đỗ xe miễn phí cho khách lưu trú', time:'11:05' },
+  ]},
+];
+
+const staff = [
+  { name:'Nguyễn Văn An',   role:'Quản lý',      booking:true, agoda:true, traveloka:true, web:true, shift:'07:00 - 15:00', online:true },
+  { name:'Trần Thị Mai',    role:'Lễ tân',        booking:true, agoda:false,traveloka:true, web:true, shift:'15:00 - 23:00', online:true },
+  { name:'Lê Minh Đức',     role:'Hỗ trợ KH',    booking:false,agoda:true, traveloka:false,web:true, shift:'07:00 - 15:00', online:true },
+  { name:'Phạm Thu Hằng',   role:'Kế toán',       booking:false,agoda:false,traveloka:false,web:true, shift:'08:00 - 17:00', online:false },
+  { name:'Đỗ Quang Huy',    role:'Lễ tân',        booking:true, agoda:true, traveloka:true, web:false,shift:'23:00 - 07:00', online:false },
+  { name:'Vũ Thị Linh',     role:'Hỗ trợ KH',    booking:true, agoda:false,traveloka:true, web:true, shift:'15:00 - 23:00', online:true },
+];
+
+const notifications = [
+  { id:1, icon:'fa-calendar-check', color:'#003580', platform:'Booking.com', text:'Booking mới từ Trần Minh Khoa — Phòng P101, 2 đêm', time:'2 phút trước', unread:true },
+  { id:2, icon:'fa-comment',        color:'#e31837', platform:'Agoda',       text:'Tin nhắn mới từ Vũ Đình Nam — "Tôi có thể check-in sớm không?"', time:'8 phút trước', unread:true },
+  { id:3, icon:'fa-calendar-check', color:'#0064d2', platform:'Traveloka',   text:'Booking mới từ Đỗ Thị Lan — Phòng P201, 1 đêm', time:'15 phút trước', unread:true },
+  { id:4, icon:'fa-rotate',         color:'#1a4fa0', platform:'Hệ thống',    text:'Đồng bộ dữ liệu Traveloka hoàn thành — 20 phòng cập nhật', time:'32 phút trước', unread:true },
+  { id:5, icon:'fa-xmark-circle',   color:'#dc2626', platform:'Agoda',       text:'Booking BK-00130 bị hủy bởi Mai Văn Trung', time:'1 giờ trước', unread:true },
+  { id:6, icon:'fa-comment',        color:'#003580', platform:'Booking.com', text:'Tin nhắn mới từ Nguyễn Thị Bích — "Cho hỏi về chính sách hủy"', time:'2 giờ trước', unread:false },
+  { id:7, icon:'fa-calendar-check', color:'#003580', platform:'Booking.com', text:'Booking BK-00141 xác nhận thành công', time:'3 giờ trước', unread:false },
+];
+
+const syncLog = [
+  { time:'10:45:23', status:'ok',   msg:'[Booking.com] Đồng bộ thành công — 8 phòng, 5 booking mới' },
+  { time:'10:45:24', status:'ok',   msg:'[Agoda] Đồng bộ thành công — 6 phòng, 3 booking mới' },
+  { time:'10:45:26', status:'warn', msg:'[Traveloka] Đang đồng bộ lại — retry attempt 2/3' },
+  { time:'10:30:00', status:'ok',   msg:'[Booking.com] Nhận webhook: Booking BK-00134 confirmed' },
+  { time:'10:15:11', status:'ok',   msg:'[Agoda] Nhận webhook: Booking BK-00138 confirmed' },
+  { time:'09:55:08', status:'ok',   msg:'[Traveloka] Nhận webhook: Booking BK-00137 pending' },
+  { time:'09:30:00', status:'ok',   msg:'[System] Tất cả kết nối API đang hoạt động bình thường' },
+];
+
+let currentContact = null;
+let notifOpen = false;
+let roomFilter = 'all';
+let roomStatusFilter = 'all';
+let bookingFilter = 'all';
+
+// =====================================================================
+// AUTH
+// =====================================================================
+function showPage(id) {
+  document.querySelectorAll('#auth-wrap > div').forEach(d => d.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function toggleEye(inputId, eyeId) {
+  const inp = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if (inp.type === 'password') { inp.type = 'text'; eye.className = 'fa-solid fa-eye'; }
+  else { inp.type = 'password'; eye.className = 'fa-solid fa-eye-slash'; }
+  eye.style.cssText = 'position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;cursor:pointer;font-size:14px;';
+}
+
+function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  let ok = true;
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { document.getElementById('l-email-err').classList.remove('hidden'); ok=false; } else document.getElementById('l-email-err').classList.add('hidden');
+  if (pass.length < 6) { document.getElementById('l-pass-err').classList.remove('hidden'); ok=false; } else document.getElementById('l-pass-err').classList.add('hidden');
+  if (!ok) return;
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.pass === pass);
+  if (!user) { const e=document.getElementById('l-err'); e.textContent='Email hoặc mật khẩu không đúng'; e.classList.remove('hidden'); return; }
+  document.getElementById('l-err').classList.add('hidden');
+  setSession(user);
+  loadApp(user);
+}
+
+function doRegister() {
+  const last   = document.getElementById('r-last').value.trim();
+  const first  = document.getElementById('r-first').value.trim();
+  const email  = document.getElementById('r-email').value.trim();
+  const pass   = document.getElementById('r-pass').value;
+  const pass2  = document.getElementById('r-pass2').value;
+  const role   = document.getElementById('r-role').value;
+  let ok = true;
+  const users = getUsers();
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) || users.find(u=>u.email===email)) { document.getElementById('r-email-err').classList.remove('hidden'); ok=false; } else document.getElementById('r-email-err').classList.add('hidden');
+  if (pass.length < 6) { document.getElementById('r-pass-err').classList.remove('hidden'); ok=false; } else document.getElementById('r-pass-err').classList.add('hidden');
+  if (pass !== pass2) { document.getElementById('r-pass2-err').classList.remove('hidden'); ok=false; } else document.getElementById('r-pass2-err').classList.add('hidden');
+  if (!ok) return;
+  const newUser = { email, pass, first: first||'User', last: last||'', role };
+  users.push(newUser);
+  saveUsers(users);
+  const ok2 = document.getElementById('r-ok');
+  ok2.textContent = '✓ Tài khoản đã được tạo! Đang chuyển đến trang đăng nhập...';
+  ok2.classList.remove('hidden');
+  setTimeout(()=>showPage('page-login'), 1800);
+}
+
+function doLogout() {
+  clearSession();
+  document.getElementById('app-wrap').classList.add('hidden');
+  document.getElementById('auth-wrap').classList.remove('hidden');
+  showPage('page-login');
+}
+
+// =====================================================================
+// APP BOOT
+// =====================================================================
+function loadApp(user) {
+  document.getElementById('auth-wrap').classList.add('hidden');
+  document.getElementById('app-wrap').classList.remove('hidden');
+  const name = (user.last+' '+user.first).trim() || user.email;
+  const initials = (user.first||user.email)[0].toUpperCase();
+  const roleMap = { admin:'Super Admin', manager:'Quản lý', staff:'Nhân viên' };
+  document.getElementById('sb-name').textContent = name;
+  document.getElementById('sb-role').textContent = roleMap[user.role]||user.role;
+  document.getElementById('sb-avatar').textContent = initials;
+  document.getElementById('top-name').textContent = name;
+  document.getElementById('top-avatar').textContent = initials;
+  renderAll();
+  startRealtime();
+}
+
+// Auto login if session exists
+window.addEventListener('load', () => {
+  const s = getSession();
+  if (s) loadApp(s);
+});
+
+// =====================================================================
+// NAVIGATION
+// =====================================================================
+function navTo(viewId, el) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  if (el) {
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
+
+// =====================================================================
+// RENDER ALL
+// =====================================================================
+function renderAll() {
+  renderNotifications();
+  renderDashboard();
+  renderRooms();
+  renderBookings();
+  renderMessages();
+  renderRevenue();
+  renderStaff();
+  renderApi();
+}
+
+// =====================================================================
+// DASHBOARD
+// =====================================================================
+function renderDashboard() {
+  // Platform bars
+  const bkTotal=8, bkBooked=4, agTotal=6, agBooked=2, tvTotal=6, tvBooked=2;
+  document.getElementById('platform-bars').innerHTML = `
+    <div style="display:flex;gap:8px;align-items:flex-end;height:80px;margin-bottom:4px;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:10px;font-weight:700;color:#64748b;">${bkBooked}/${bkTotal}</div>
+        <div style="width:100%;background:#e2e8f0;border-radius:4px;overflow:hidden;height:52px;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="background:#003580;height:${(bkBooked/bkTotal)*100}%;"></div>
+        </div>
+        <div style="font-size:10px;color:#003580;font-weight:600;">Booking</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:10px;font-weight:700;color:#64748b;">${agBooked}/${agTotal}</div>
+        <div style="width:100%;background:#e2e8f0;border-radius:4px;overflow:hidden;height:52px;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="background:#e31837;height:${(agBooked/agTotal)*100}%;"></div>
+        </div>
+        <div style="font-size:10px;color:#e31837;font-weight:600;">Agoda</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:10px;font-weight:700;color:#64748b;">${tvBooked}/${tvTotal}</div>
+        <div style="width:100%;background:#e2e8f0;border-radius:4px;overflow:hidden;height:52px;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="background:#0064d2;height:${(tvBooked/tvTotal)*100}%;"></div>
+        </div>
+        <div style="font-size:10px;color:#0064d2;font-weight:600;">Traveloka</div>
+      </div>
+    </div>`;
+
+  document.getElementById('platform-legend').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;">
+      <span style="font-size:12px;color:#334155;font-weight:500;"><span class="platform-dot dot-booking" style="display:inline-block;margin-right:6px;"></span>Booking.com</span>
+      <span style="font-size:13px;font-weight:700;color:#0f172a;">${bkTotal} phòng · <span style="color:#dc2626">${bkBooked} đặt</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;">
+      <span style="font-size:12px;color:#334155;font-weight:500;"><span class="platform-dot dot-agoda" style="display:inline-block;margin-right:6px;"></span>Agoda</span>
+      <span style="font-size:13px;font-weight:700;color:#0f172a;">${agTotal} phòng · <span style="color:#dc2626">${agBooked} đặt</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+      <span style="font-size:12px;color:#334155;font-weight:500;"><span class="platform-dot dot-traveloka" style="display:inline-block;margin-right:6px;"></span>Traveloka</span>
+      <span style="font-size:13px;font-weight:700;color:#0f172a;">${tvTotal} phòng · <span style="color:#dc2626">${tvBooked} đặt</span></span>
+    </div>`;
+
+  // Recent bookings
+  const recent = bookings.filter(b=>b.status!=='cancelled').slice(0,5);
+  document.getElementById('recent-bookings').innerHTML = recent.map(b=>`
+    <tr>
+      <td><div style="font-weight:600;color:#0f172a;">${b.guest}</div><div style="font-size:11px;color:#94a3b8;">${b.id}</div></td>
+      <td><span style="background:#f1f5f9;padding:3px 8px;border-radius:6px;font-weight:600;font-size:12px;">${b.room}</span></td>
+      <td><span class="badge badge-${b.platform}" style="font-size:10px;">${platformName(b.platform)}</span></td>
+      <td style="font-size:13px;">${b.checkin}</td>
+      <td>${statusBadge(b.status)}</td>
+    </tr>`).join('');
+
+  // Dash messages
+  document.getElementById('dash-msgs').innerHTML = contacts.slice(0,4).map(c=>`
+    <div class="msg-item" onclick="navTo('v-messages',null);setTimeout(()=>openContact(${c.id}),50);">
+      <div class="avatar" style="background:${c.color};width:38px;height:38px;font-size:14px;">${c.avatar}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:600;color:#0f172a;">${c.name}</span>
+          <span class="badge badge-${c.platform}" style="font-size:9px;">${platformName(c.platform)}</span>
+        </div>
+        <div style="font-size:12px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">${c.msgs[c.msgs.length-1].text}</div>
+      </div>
+      ${c.unread?`<div class="notif-dot" style="background:#dc2626;margin-top:4px;"></div>`:''}
+    </div>`).join('');
+
+  // Dash staff
+  document.getElementById('dash-staff').innerHTML = staff.map(s=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;">
+      <div style="position:relative;">
+        <div class="avatar" style="background:#1a4fa0;width:34px;height:34px;font-size:12px;">${s.name.split(' ').pop()[0]}</div>
+        <span style="position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:${s.online?'#22c55e':'#94a3b8'};border:2px solid #fff;"></span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:#0f172a;">${s.name}</div>
+        <div style="font-size:11px;color:#64748b;">${s.role} · ${s.shift}</div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:${s.online?'#15803d':'#64748b'};">${s.online?'Đang trực':'Offline'}</div>
+    </div>`).join('');
+}
+
+function platformName(p) { return p==='booking'?'Booking.com':p==='agoda'?'Agoda':'Traveloka'; }
+function statusBadge(s) {
+  if (s==='confirmed') return '<span class="badge badge-avail">Confirmed</span>';
+  if (s==='pending')   return '<span class="badge badge-pending">Pending</span>';
+  return '<span class="badge" style="background:#f1f5f9;color:#64748b;">Cancelled</span>';
+}
+
+// =====================================================================
+// ROOMS
+// =====================================================================
+function renderRooms() {
+  const filtered = rooms.filter(r=> (roomFilter==='all'||r.platform===roomFilter) && (roomStatusFilter==='all'||r.status===roomStatusFilter));
+  document.getElementById('rooms-grid').innerHTML = filtered.map(r=>{
+    const colorMap = { booking:'#003580', agoda:'#e31837', traveloka:'#0064d2' };
+    const statusColors = { available:'#dcfce7;color:#15803d', booked:'#fee2e2;color:#dc2626', maintenance:'#fef3c7;color:#92400e' };
+    const statusLabel  = { available:'Phòng trống', booked:'Đã đặt', maintenance:'Bảo trì' };
+    const icons = { Standard:'fa-bed', Deluxe:'fa-star-half-stroke', Suite:'fa-crown' };
+    return `<div style="background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;overflow:hidden;">
+      <div style="background:${colorMap[r.platform]};padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:16px;font-weight:800;color:#fff;">${r.id}</div>
+        <span style="background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;">${platformName(r.platform)}</span>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <i class="fa-solid ${icons[r.type]}" style="color:#1a4fa0;font-size:14px;"></i>
+          <span style="font-size:13px;font-weight:600;color:#334155;">${r.type}</span>
+          <span style="margin-left:auto;font-size:13px;font-weight:700;color:#0f172a;">${r.price}/đêm</span>
+        </div>
+        <div style="margin-bottom:10px;">
+          <span class="badge" style="background:${statusColors[r.status]};font-size:11px;">${statusLabel[r.status]}</span>
+        </div>
+        ${r.guest?`<div style="font-size:12px;color:#64748b;"><i class="fa-solid fa-user mr-1"></i>${r.guest}</div><div style="font-size:11px;color:#94a3b8;margin-top:2px;"><i class="fa-solid fa-calendar mr-1"></i>${r.checkin} → ${r.checkout}</div>`:'<div style="font-size:12px;color:#15803d;"><i class="fa-solid fa-circle-check mr-1"></i>Sẵn sàng đón khách</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterRooms(v) { roomFilter=v; renderRooms(); }
+function filterRoomStatus(v) { roomStatusFilter=v; renderRooms(); }
+
+// =====================================================================
+// BOOKINGS
+// =====================================================================
+function renderBookings(filter) {
+  if (filter) bookingFilter = filter;
+  const filtered = bookings.filter(b=> bookingFilter==='all'||b.status===bookingFilter);
+  document.getElementById('booking-table').innerHTML = filtered.map(b=>`
+    <tr>
+      <td><span style="font-weight:700;color:#1a4fa0;font-size:13px;">${b.id}</span></td>
+      <td><span style="font-weight:600;color:#0f172a;">${b.guest}</span></td>
+      <td><span style="background:#f1f5f9;padding:3px 8px;border-radius:6px;font-weight:600;font-size:12px;">${b.room}</span></td>
+      <td><span class="badge badge-${b.platform}" style="font-size:10px;">${platformName(b.platform)}</span></td>
+      <td>${b.checkin}</td>
+      <td>${b.checkout}</td>
+      <td style="font-weight:700;color:#0f172a;">${b.total}</td>
+      <td>${statusBadge(b.status)}</td>
+    </tr>`).join('');
+}
+
+function filterBookingTab(val, btn) {
+  renderBookings(val);
+  document.querySelectorAll('.tab-btn').forEach(b=>{ b.style.background='#fff'; b.style.color='#64748b'; b.style.borderColor='#e2e8f0'; });
+  if(btn){ btn.style.background='#1a4fa0'; btn.style.color='#fff'; btn.style.borderColor='#1a4fa0'; }
+}
+
+// =====================================================================
+// MESSAGES
+// =====================================================================
+function renderMessages() {
+  const unreadCount = contacts.reduce((n,c)=>n+c.unread,0);
+  document.getElementById('msg-count').textContent = unreadCount;
+  document.getElementById('msg-contacts').innerHTML = contacts.map(c=>`
+    <div class="msg-item ${currentContact===c.id?'active':''}" onclick="openContact(${c.id})">
+      <div class="avatar" style="background:${c.color};width:38px;height:38px;font-size:14px;">${c.avatar}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:600;color:#0f172a;">${c.name}</span>
+          ${c.unread?`<span style="background:#dc2626;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;">${c.unread}</span>`:''}
+        </div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:2px;"><span class="badge badge-${c.platform}" style="font-size:9px;padding:1px 6px;">${platformName(c.platform)}</span></div>
+        <div style="font-size:12px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.msgs[c.msgs.length-1].text}</div>
+      </div>
+    </div>`).join('');
+
+  if (currentContact) openContact(currentContact);
+}
+
+function openContact(id) {
+  currentContact = id;
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  c.unread = 0;
+  document.getElementById('chat-name').textContent = c.name;
+  document.getElementById('chat-platform').textContent = platformName(c.platform);
+  document.getElementById('chat-avatar').textContent = c.avatar;
+  document.getElementById('chat-avatar').style.background = c.color;
+  document.getElementById('chat-body').innerHTML = c.msgs.map(m=>`
+    <div style="display:flex;flex-direction:column;align-items:${m.from==='admin'?'flex-end':'flex-start'};">
+      <div class="msg-bubble ${m.from==='admin'?'out':'in'}">${m.text}</div>
+      <div style="font-size:10px;color:#94a3b8;margin-top:3px;">${m.time}</div>
+    </div>`).join('');
+  const body = document.getElementById('chat-body');
+  body.scrollTop = body.scrollHeight;
+  renderMessages();
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text || !currentContact) return;
+  const c = contacts.find(x=>x.id===currentContact);
+  const now = new Date();
+  c.msgs.push({ from:'admin', text, time: now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes() });
+  inp.value = '';
+  openContact(currentContact);
+}
+
+// =====================================================================
+// REVENUE
+// =====================================================================
+function renderRevenue() {
+  const days = ['T2','T3','T4','T5','T6','T7','CN'];
+  const bkData = [4200,5800,3900,6200,7100,8400,5600];
+  const agData = [2100,3200,2800,3600,4200,5100,3400];
+  const tvData = [1800,2500,2200,2900,3100,3800,2700];
+  const maxVal = Math.max(...bkData,...agData,...tvData);
+  document.getElementById('revenue-chart').innerHTML = `
+    <div style="display:flex;gap:8px;align-items:flex-end;height:180px;">
+      ${days.map((d,i)=>`
+        <div style="flex:1;display:flex;flex-direction:column;gap:0;align-items:center;">
+          <div style="width:100%;display:flex;flex-direction:column;gap:2px;align-items:center;height:160px;justify-content:flex-end;">
+            <div style="display:flex;gap:2px;align-items:flex-end;width:100%;justify-content:center;height:${Math.round((bkData[i]/maxVal)*140)}px;">
+              <div style="flex:1;background:#003580;border-radius:3px 3px 0 0;height:100%;"></div>
+              <div style="flex:1;background:#e31837;border-radius:3px 3px 0 0;height:${Math.round((agData[i]/bkData[i])*100)}%;"></div>
+              <div style="flex:1;background:#0064d2;border-radius:3px 3px 0 0;height:${Math.round((tvData[i]/bkData[i])*100)}%;"></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#64748b;font-weight:600;margin-top:8px;">${d}</div>
+          <div style="font-size:10px;color:#94a3b8;">${((bkData[i]+agData[i]+tvData[i])/1000).toFixed(1)}M</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// =====================================================================
+// STAFF
+// =====================================================================
+function renderStaff() {
+  const icon = (v,color) => v ? `<i class="fa-solid fa-circle-check" style="color:${color||'#15803d'};font-size:15px;"></i>` : `<i class="fa-solid fa-circle-xmark" style="color:#e2e8f0;font-size:15px;"></i>`;
+  document.getElementById('staff-table').innerHTML = staff.map(s=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="position:relative;">
+            <div class="avatar" style="background:#1a4fa0;width:34px;height:34px;font-size:12px;">${s.name.split(' ').pop()[0]}</div>
+            <span style="position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;background:${s.online?'#22c55e':'#94a3b8'};border:2px solid #fff;"></span>
+          </div>
+          <div><div style="font-weight:600;color:#0f172a;font-size:14px;">${s.name}</div></div>
+        </div>
+      </td>
+      <td><span style="background:#eff6ff;color:#1a4fa0;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${s.role}</span></td>
+      <td>${icon(s.booking,'#003580')}</td>
+      <td>${icon(s.agoda,'#e31837')}</td>
+      <td>${icon(s.traveloka,'#0064d2')}</td>
+      <td>${icon(s.web,'#1a4fa0')}</td>
+      <td style="font-size:13px;color:#334155;">${s.shift}</td>
+      <td><span style="font-size:12px;font-weight:600;color:${s.online?'#15803d':'#64748b'};">${s.online?'🟢 Đang trực':'⚫ Offline'}</span></td>
+    </tr>`).join('');
+}
+
+// =====================================================================
+// API / SYNC LOG
+// =====================================================================
+function renderApi() {
+  document.getElementById('sync-log').innerHTML = syncLog.map(l=>`
+    <div style="display:flex;gap:14px;font-size:12px;line-height:1.8;">
+      <span style="color:#94a3b8;flex-shrink:0;">${l.time}</span>
+      <span style="color:${l.status==='ok'?'#15803d':l.status==='warn'?'#92400e':'#dc2626'};">${l.status==='ok'?'✓':l.status==='warn'?'⚠':'✗'}</span>
+      <span style="color:#334155;">${l.msg}</span>
+    </div>`).join('');
+}
+
+function testApi(name) {
+  toast(`<i class="fa-solid fa-rotate fa-spin mr-2" style="color:#1a4fa0;"></i>Đang kiểm tra kết nối ${name}...`, 1200);
+  setTimeout(()=>toast(`<i class="fa-solid fa-circle-check mr-2" style="color:#15803d;"></i>${name} kết nối thành công! Latency: ${Math.floor(Math.random()*80)+40}ms`, 3000), 1400);
+}
+
+// =====================================================================
+// NOTIFICATIONS
+// =====================================================================
+function renderNotifications() {
+  document.getElementById('notif-list').innerHTML = notifications.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="markRead(${n.id})">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${n.color};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid ${n.icon}" style="color:#fff;font-size:14px;"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:2px;">${n.platform}</div>
+          <div style="font-size:13px;color:#0f172a;font-weight:${n.unread?'600':'400'};line-height:1.4;">${n.text}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:3px;">${n.time}</div>
+        </div>
+        ${n.unread?`<div class="notif-dot" style="flex-shrink:0;margin-top:6px;"></div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function markRead(id) {
+  const n = notifications.find(x=>x.id===id);
+  if (n) n.unread = false;
+  const unread = notifications.filter(x=>x.unread).length;
+  document.getElementById('notif-count').textContent = unread;
+  if (!unread) document.getElementById('notif-count').style.display='none';
+  renderNotifications();
+}
+
+function toggleNotif() {
+  notifOpen = !notifOpen;
+  document.getElementById('notif-panel').classList.toggle('open', notifOpen);
+}
+
+// =====================================================================
+// SETTINGS
+// =====================================================================
+function saveSettings() {
+  toast('<i class="fa-solid fa-circle-check mr-2" style="color:#15803d;"></i>Đã lưu cài đặt thành công!', 2500);
+}
+
+// =====================================================================
+// TOAST
+// =====================================================================
+function toast(html, duration=3000) {
+  const el = document.createElement('div');
+  el.innerHTML = html;
+  el.style.cssText = 'background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:13px 18px;font-size:13px;color:#334155;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.1);max-width:320px;animation:slide-in .3s ease;';
+  document.getElementById('toast-wrap').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 300); }, duration);
+}
+
+// =====================================================================
+// REALTIME SIMULATION
+// =====================================================================
+function startRealtime() {
+  const events = [
+    { delay:8000,  fn:()=>pushNotif('fa-calendar-check','#003580','Booking.com','Booking mới! Trần Văn Khôi đặt phòng P102 — 3 đêm') },
+    { delay:15000, fn:()=>pushNotif('fa-comment','#e31837','Agoda','Tin nhắn mới từ Nguyễn Thu Trang — "Phòng có wifi không?"') },
+    { delay:25000, fn:()=>{ bookRoom(); pushNotif('fa-calendar-check','#0064d2','Traveloka','Booking mới! Lê Thị Kim đặt phòng P306 — 2 đêm'); }},
+    { delay:38000, fn:()=>pushNotif('fa-xmark-circle','#dc2626','Hệ thống','Cảnh báo: Phòng P204 bảo trì hoàn thành, sẵn sàng nhận khách') },
+    { delay:50000, fn:()=>pushMsg() },
+  ];
+  events.forEach(e=>setTimeout(e.fn, e.delay));
+}
+
+function pushNotif(icon, color, platform, text) {
+  const bell = document.getElementById('bell-icon');
+  bell.classList.add('ring');
+  setTimeout(()=>bell.classList.remove('ring'), 700);
+  const n = { id: Date.now(), icon, color, platform, text, time:'Vừa xong', unread:true };
+  notifications.unshift(n);
+  const count = notifications.filter(x=>x.unread).length;
+  const badge = document.getElementById('notif-count');
+  badge.textContent = count;
+  badge.style.display='flex';
+  renderNotifications();
+  toast(`<i class="fa-solid ${icon} mr-2" style="color:${color};"></i><strong>${platform}:</strong> ${text}`, 4000);
+}
+
+function bookRoom() {
+  const avail = rooms.find(r=>r.status==='available');
+  if (avail) {
+    avail.status = 'booked';
+    avail.guest = 'Lê Thị Kim';
+    avail.checkin = '01/04';
+    avail.checkout = '03/04';
+    const booked = rooms.filter(r=>r.status==='booked').length;
+    const availCount = rooms.filter(r=>r.status==='available').length;
+    document.getElementById('stat-booked').textContent = booked;
+    document.getElementById('stat-avail').textContent = availCount;
+    renderRooms();
+  }
+}
+
+function pushMsg() {
+  const c = contacts[0];
+  c.msgs.push({ from:'guest', text:'Bạn ơi, phòng có thể thêm giường phụ được không? Tôi đi 3 người.', time: getCurrentTime() });
+  c.unread++;
+  renderMessages();
+  pushNotif('fa-comment','#003580','Booking.com',`Tin nhắn mới từ ${c.name}`);
+}
+
+function getCurrentTime() {
+  const now = new Date();
+  return now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+}
+</script>
+</body>
+</html>
